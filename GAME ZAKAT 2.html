@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZAKAT QUEST — Petualangan Ilmu Zakat</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Rajdhani:wght@400;600;700&family=Orbitron:wght@400;700;900&family=MedievalSharp&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #F5C842; --gold2: #E8A020; --green: #1DB954; --green-dark: #0e6b30;
+  --bg: #0A0E1A; --bg2: #111827; --bg3: #1a2235; --text: #F0EAD6;
+  --accent: #4ECDC4; --red: #FF6B6B; --purple: #9B59B6; --blue: #3498DB;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;min-height:100vh;overflow-x:hidden;}
+#stars{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;}
+.star{position:absolute;background:white;border-radius:50%;animation:twinkle var(--d) ease-in-out infinite alternate;}
+@keyframes twinkle{from{opacity:.1;transform:scale(1);}to{opacity:.9;transform:scale(1.3);}}
+.crescent{position:fixed;top:20px;right:40px;width:70px;height:70px;border-radius:50%;box-shadow:12px -4px 0 0 var(--gold);background:transparent;opacity:.6;z-index:0;animation:moonGlow 3s ease-in-out infinite alternate;}
+@keyframes moonGlow{from{filter:drop-shadow(0 0 8px var(--gold));opacity:.5;}to{filter:drop-shadow(0 0 20px var(--gold));opacity:.8;}}
+.geo-pattern{position:fixed;top:0;left:0;width:100%;height:100%;opacity:.03;background-image:repeating-linear-gradient(45deg,var(--gold) 0,var(--gold) 1px,transparent 0,transparent 50%),repeating-linear-gradient(-45deg,var(--gold) 0,var(--gold) 1px,transparent 0,transparent 50%);background-size:40px 40px;pointer-events:none;z-index:0;}
+.container{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:20px;}
+.screen{display:none;animation:fadeIn .5s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+
+/* ====== REGISTRATION ====== */
+.reg-wrap{max-width:480px;margin:60px auto;text-align:center;padding:20px;}
+.reg-logo{font-family:'Amiri',serif;font-size:clamp(3rem,10vw,5.5rem);background:linear-gradient(135deg,var(--gold),var(--gold2),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:pulse 2s ease-in-out infinite alternate;line-height:1;}
+@keyframes pulse{from{filter:drop-shadow(0 0 20px rgba(245,200,66,.4));}to{filter:drop-shadow(0 0 50px rgba(245,200,66,.8));}}
+.reg-title{font-family:'Orbitron',monospace;font-size:clamp(1rem,3vw,1.6rem);color:var(--accent);letter-spacing:.3em;margin:8px 0;}
+.reg-sub{opacity:.6;font-size:.95rem;margin-bottom:30px;font-style:italic;}
+.reg-card{background:var(--bg3);border:1px solid rgba(245,200,66,.25);border-radius:20px;padding:30px 25px;}
+.reg-card h3{font-family:'Orbitron',monospace;color:var(--gold);font-size:1rem;margin-bottom:20px;letter-spacing:.1em;}
+.field-group{margin-bottom:18px;text-align:left;}
+.field-group label{display:block;font-size:.8rem;text-transform:uppercase;letter-spacing:.15em;opacity:.7;margin-bottom:6px;}
+.field-group input, .field-group select{width:100%;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.15);border-radius:10px;padding:12px 15px;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:1rem;outline:none;transition:border-color .2s;}
+.field-group input:focus,.field-group select:focus{border-color:var(--gold);}
+.field-group select option{background:var(--bg2);color:var(--text);}
+.reg-note{font-size:.78rem;opacity:.5;text-align:center;margin-top:15px;}
+
+/* ====== HOME ====== */
+.home-screen{text-align:center;padding:30px 20px;}
+.player-badge{display:inline-flex;align-items:center;gap:10px;background:rgba(245,200,66,.12);border:1px solid rgba(245,200,66,.3);border-radius:30px;padding:8px 20px;margin-bottom:20px;cursor:pointer;transition:all .2s;}
+.player-badge:hover{background:rgba(245,200,66,.2);}
+.player-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-size:1.2rem;}
+.player-info{text-align:left;}
+.player-name-display{font-family:'Orbitron',monospace;font-size:.85rem;color:var(--gold);}
+.player-class-display{font-size:.75rem;opacity:.6;}
+.stats-bar{display:flex;justify-content:center;gap:25px;margin:15px 0;padding:14px;background:rgba(255,255,255,.05);border-radius:12px;flex-wrap:wrap;}
+.stat-item{text-align:center;}
+.stat-value{font-family:'Orbitron',monospace;font-size:1.4rem;color:var(--gold);display:block;}
+.stat-label{font-size:.7rem;opacity:.6;text-transform:uppercase;letter-spacing:.1em;}
+.mode-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin:25px 0;}
+.mode-card{background:var(--bg3);border:2px solid transparent;border-radius:16px;padding:25px 18px;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;}
+.mode-card::before{content:'';position:absolute;inset:0;border-radius:14px;padding:2px;background:linear-gradient(135deg,var(--gold),transparent,var(--accent));-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity .3s;}
+.mode-card:hover::before{opacity:1;}
+.mode-card:hover{transform:translateY(-5px);background:var(--bg2);}
+.mode-icon{font-size:2.8rem;margin-bottom:12px;display:block;animation:float 3s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+.mode-card:nth-child(2) .mode-icon{animation-delay:-1s;}
+.mode-card:nth-child(3) .mode-icon{animation-delay:-1.5s;}
+.mode-card:nth-child(4) .mode-icon{animation-delay:-2s;}
+.mode-card:nth-child(5) .mode-icon{animation-delay:-2.5s;}
+.mode-title{font-family:'Orbitron',monospace;font-size:.9rem;color:var(--gold);margin-bottom:6px;letter-spacing:.08em;}
+.mode-desc{font-size:.82rem;opacity:.7;line-height:1.4;}
+.mode-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.7rem;font-family:'Orbitron',monospace;margin-top:8px;}
+.badge-easy{background:rgba(29,185,84,.2);color:var(--green);border:1px solid var(--green);}
+.badge-medium{background:rgba(245,200,66,.2);color:var(--gold);border:1px solid var(--gold);}
+.badge-hard{background:rgba(255,107,107,.2);color:var(--red);border:1px solid var(--red);}
+.badge-epic{background:rgba(155,89,182,.2);color:var(--purple);border:1px solid var(--purple);}
+.badge-fps{background:rgba(52,152,219,.2);color:var(--blue);border:1px solid var(--blue);}
+
+/* ====== GAME HUD ====== */
+.game-hud{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;background:rgba(0,0,0,.4);border-radius:12px;margin-bottom:15px;border:1px solid rgba(245,200,66,.2);flex-wrap:wrap;gap:8px;}
+.hud-item{text-align:center;}
+.hud-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.15em;opacity:.6;display:block;}
+.hud-value{font-family:'Orbitron',monospace;font-size:1.2rem;font-weight:700;}
+.hud-score{color:var(--gold);}
+.hud-lives{color:var(--red);}
+.hud-streak{color:var(--accent);}
+.hud-level{color:var(--purple);}
+.timer-container{margin-bottom:15px;}
+.timer-bar{height:8px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;}
+.timer-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--gold));border-radius:4px;transition:width .1s linear;}
+.timer-fill.danger{background:linear-gradient(90deg,var(--red),#ff4444);animation:timerDanger .3s ease-in-out infinite alternate;}
+@keyframes timerDanger{from{opacity:.8;}to{opacity:1;}}
+.timer-text{font-family:'Orbitron',monospace;font-size:.8rem;text-align:right;margin-top:3px;opacity:.7;}
+.question-card{background:var(--bg3);border-radius:18px;padding:25px;margin-bottom:18px;border:1px solid rgba(245,200,66,.15);position:relative;overflow:hidden;}
+.question-card::after{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(245,200,66,.05) 0%,transparent 60%);pointer-events:none;}
+.question-category{display:inline-block;padding:3px 12px;background:rgba(78,205,196,.15);border:1px solid var(--accent);border-radius:20px;font-size:.7rem;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;}
+.question-number{font-size:.75rem;opacity:.5;float:right;font-family:'Orbitron',monospace;}
+.question-text{font-size:clamp(1rem,2.5vw,1.2rem);line-height:1.6;color:var(--text);font-weight:600;clear:both;}
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px;}
+.option-btn{background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.1);border-radius:11px;padding:14px 18px;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;text-align:left;transition:all .2s;position:relative;overflow:hidden;}
+.option-btn::before{content:'';position:absolute;left:0;top:0;height:100%;width:4px;background:var(--accent);border-radius:11px 0 0 11px;opacity:0;transition:opacity .2s;}
+.option-btn:hover:not(:disabled){background:rgba(78,205,196,.1);border-color:var(--accent);transform:translateX(4px);}
+.option-btn:hover:not(:disabled)::before{opacity:1;}
+.option-btn.correct{background:rgba(29,185,84,.2);border-color:var(--green);color:#fff;animation:correctPop .3s ease;}
+.option-btn.wrong{background:rgba(255,107,107,.2);border-color:var(--red);animation:shake .4s ease;}
+.option-btn:disabled{cursor:not-allowed;}
+@keyframes correctPop{0%{transform:scale(1);}50%{transform:scale(1.04);}100%{transform:scale(1);}}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-5px);}75%{transform:translateX(5px);}}
+.progress-bar{height:5px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;margin:8px 0;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--accent));border-radius:3px;transition:width .5s ease;}
+.lifelines{display:flex;gap:10px;justify-content:center;margin:12px 0;flex-wrap:wrap;}
+.lifeline-btn{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.2);border-radius:9px;padding:8px 16px;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:.8rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px;}
+.lifeline-btn:hover:not(:disabled){background:rgba(245,200,66,.15);border-color:var(--gold);color:var(--gold);}
+.lifeline-btn:disabled{opacity:.3;cursor:not-allowed;}
+.ll-icon{font-size:1.1rem;}
+
+/* ====== FEEDBACK ====== */
+.feedback{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);background:var(--bg2);border-radius:20px;padding:28px 38px;text-align:center;z-index:100;border:2px solid var(--gold);transition:transform .3s cubic-bezier(.34,1.56,.64,1);min-width:260px;max-width:340px;}
+.feedback.show{transform:translate(-50%,-50%) scale(1);}
+.feedback-emoji{font-size:2.8rem;display:block;margin-bottom:8px;}
+.feedback-title{font-family:'Orbitron',monospace;font-size:1.4rem;margin-bottom:6px;}
+.feedback-correct .feedback-title{color:var(--green);}
+.feedback-wrong .feedback-title{color:var(--red);}
+.feedback-info{font-size:.88rem;opacity:.8;line-height:1.5;max-width:290px;}
+.feedback-points{font-family:'Orbitron',monospace;font-size:1.8rem;color:var(--gold);margin-top:6px;font-weight:900;}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:90;}
+.overlay.show{display:block;}
+
+/* ====== CALC MODE ====== */
+.calc-display{background:rgba(0,0,0,.4);border:2px solid var(--gold);border-radius:12px;padding:20px;text-align:center;margin:15px 0;}
+.calc-problem{font-size:clamp(.9rem,2.5vw,1.1rem);color:var(--text);line-height:1.9;}
+.calc-problem .hl{color:var(--gold);font-weight:700;}
+.calc-input-row{display:flex;gap:10px;margin-top:12px;align-items:center;}
+.calc-input{flex:1;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.2);border-radius:10px;padding:11px 14px;color:var(--text);font-family:'Orbitron',monospace;font-size:1.05rem;text-align:center;outline:none;transition:border-color .2s;}
+.calc-input:focus{border-color:var(--gold);}
+
+/* ====== DIFFICULTY ====== */
+.difficulty-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0;}
+.diff-card{background:var(--bg3);border:2px solid rgba(255,255,255,.1);border-radius:13px;padding:18px 12px;text-align:center;cursor:pointer;transition:all .3s;}
+.diff-card:hover{transform:scale(1.05);}
+.diff-card.easy:hover,.diff-card.easy.selected{border-color:var(--green);background:rgba(29,185,84,.1);}
+.diff-card.medium:hover,.diff-card.medium.selected{border-color:var(--gold);background:rgba(245,200,66,.1);}
+.diff-card.hard:hover,.diff-card.hard.selected{border-color:var(--red);background:rgba(255,107,107,.1);}
+.diff-icon{font-size:2.2rem;display:block;margin-bottom:8px;}
+.diff-name{font-family:'Orbitron',monospace;font-size:.82rem;margin-bottom:4px;}
+.diff-desc{font-size:.72rem;opacity:.6;}
+
+/* ====== RPG MODE ====== */
+.rpg-scene{background:var(--bg3);border-radius:20px;padding:20px;border:2px solid rgba(155,89,182,.4);position:relative;overflow:hidden;min-height:200px;}
+.rpg-scene::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,14,26,0) 60%,rgba(10,14,26,.8) 100%);pointer-events:none;}
+.rpg-bg{position:absolute;top:0;left:0;width:100%;height:180px;background:linear-gradient(180deg,#1a0a2e 0%,#2d1b4e 40%,#3d2a6e 70%,#5a4a8a 100%);overflow:hidden;}
+.rpg-stars-sm{position:absolute;top:0;left:0;width:100%;height:100%;}
+.rpg-ground{position:absolute;bottom:0;left:0;width:100%;height:50px;background:linear-gradient(180deg,#2d4a1e,#1a2e0e);}
+.rpg-mosque{position:absolute;bottom:48px;right:40px;font-size:5rem;filter:drop-shadow(0 0 20px rgba(245,200,66,.4));}
+.rpg-char{position:absolute;bottom:48px;left:60px;font-size:4rem;animation:charIdle .8s ease-in-out infinite alternate;}
+@keyframes charIdle{from{transform:translateY(0);}to{transform:translateY(-4px);}}
+.rpg-npc{position:absolute;bottom:48px;left:180px;font-size:3rem;}
+.rpg-dialog{position:relative;z-index:2;margin-top:145px;background:rgba(0,0,0,.7);border-radius:12px;padding:15px 18px;border:1px solid rgba(155,89,182,.4);}
+.rpg-dialog-name{font-family:'Orbitron',monospace;font-size:.8rem;color:var(--purple);margin-bottom:5px;}
+.rpg-dialog-text{font-size:.95rem;line-height:1.5;}
+.rpg-hp-bar{margin-top:10px;}
+.rpg-hp-label{font-size:.7rem;opacity:.6;text-transform:uppercase;letter-spacing:.1em;}
+.rpg-hp-track{height:10px;background:rgba(255,255,255,.1);border-radius:5px;overflow:hidden;margin-top:3px;}
+.rpg-hp-fill{height:100%;background:linear-gradient(90deg,#e74c3c,#c0392b);border-radius:5px;transition:width .5s ease;}
+.rpg-xp-fill{background:linear-gradient(90deg,#9B59B6,#6c3483)!important;}
+.enemy-hp-fill{background:linear-gradient(90deg,#e74c3c,#c0392b)!important;}
+.rpg-battle-scene{display:flex;justify-content:space-around;align-items:flex-end;padding:20px 0;min-height:150px;position:relative;}
+.rpg-fighter{text-align:center;}
+.rpg-fighter-icon{font-size:4rem;display:block;}
+.rpg-fighter-name{font-size:.8rem;opacity:.7;margin-top:4px;}
+.rpg-vs{font-family:'Orbitron',monospace;font-size:1.5rem;color:var(--red);text-shadow:0 0 20px var(--red);align-self:center;}
+.rpg-action-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:12px 0;}
+.rpg-action-btn{background:rgba(155,89,182,.2);border:1px solid var(--purple);border-radius:10px;padding:10px 18px;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:.9rem;cursor:pointer;transition:all .2s;}
+.rpg-action-btn:hover{background:rgba(155,89,182,.4);transform:scale(1.05);}
+
+/* ====== FPS MODE ====== */
+.fps-screen{position:relative;background:#0d1117;border-radius:16px;overflow:hidden;border:2px solid rgba(52,152,219,.4);}
+.fps-viewport{width:100%;height:280px;position:relative;background:linear-gradient(180deg,#87CEEB 0%,#87CEEB 45%,#8B7355 45%,#5D4E37 55%,#4a3728 100%);overflow:hidden;}
+.fps-sky{position:absolute;top:0;left:0;width:100%;height:45%;background:linear-gradient(180deg,#1a3a5c,#2980b9,#5dade2);}
+.fps-sun{position:absolute;top:30px;right:80px;width:50px;height:50px;background:radial-gradient(var(--gold),rgba(245,200,66,0));border-radius:50%;box-shadow:0 0 30px var(--gold);}
+.fps-ground{position:absolute;bottom:0;left:0;width:100%;height:55%;background:linear-gradient(180deg,#8B7355,#5D4E37 30%,#3d2b1f);}
+.fps-road{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:60%;height:55%;background:linear-gradient(180deg,rgba(100,100,100,.6),rgba(80,80,80,.8));clip-path:polygon(30% 0%,70% 0%,100% 100%,0% 100%);}
+.fps-buildings{position:absolute;bottom:55%;left:0;width:100%;display:flex;justify-content:space-around;align-items:flex-end;}
+.fps-building{background:rgba(60,50,40,.9);border:1px solid rgba(245,200,66,.2);}
+.fps-mosque-3d{position:absolute;bottom:45%;left:50%;transform:translateX(-50%);font-size:5rem;filter:drop-shadow(0 0 20px rgba(245,200,66,.6));animation:mosqueGlow 2s ease-in-out infinite alternate;}
+@keyframes mosqueGlow{from{filter:drop-shadow(0 0 15px rgba(245,200,66,.4));}to{filter:drop-shadow(0 0 35px rgba(245,200,66,.9));}}
+.fps-crosshair{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:5;}
+.fps-crosshair::before{content:'+';font-size:2rem;color:rgba(255,255,255,.8);text-shadow:0 0 10px white;}
+.fps-hud-overlay{position:absolute;inset:0;pointer-events:none;z-index:4;}
+.fps-health{position:absolute;bottom:10px;left:15px;font-family:'Orbitron',monospace;font-size:.8rem;color:#00ff00;}
+.fps-ammo{position:absolute;bottom:10px;right:15px;font-family:'Orbitron',monospace;font-size:.8rem;color:var(--gold);}
+.fps-objective{position:absolute;top:10px;left:50%;transform:translateX(-50%);font-family:'Orbitron',monospace;font-size:.75rem;color:var(--gold);text-align:center;white-space:nowrap;}
+.fps-npc-sprite{position:absolute;font-size:3rem;transition:all .3s;}
+.fps-action-prompt{background:rgba(0,0,0,.8);border:1px solid var(--blue);border-radius:10px;padding:12px 15px;text-align:center;font-size:.9rem;margin:10px;}
+.fps-choices{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px;}
+.fps-choice{background:rgba(52,152,219,.15);border:1px solid var(--blue);border-radius:8px;padding:12px 15px;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:.9rem;cursor:pointer;transition:all .2s;text-align:left;}
+.fps-choice:hover:not(:disabled){background:rgba(52,152,219,.3);border-color:#5dade2;transform:translateX(3px);}
+.fps-choice.correct{background:rgba(29,185,84,.2);border-color:var(--green);}
+.fps-choice.wrong{background:rgba(255,107,107,.2);border-color:var(--red);}
+.fps-stat-bar{display:flex;gap:20px;padding:10px 15px;background:rgba(0,0,0,.5);border-top:1px solid rgba(52,152,219,.3);}
+.fps-stat{font-family:'Orbitron',monospace;font-size:.8rem;}
+
+/* ====== RESULT SCREEN ====== */
+.result-screen{text-align:center;padding:35px 20px;}
+.result-trophy{font-size:4.5rem;display:block;animation:trophySpin .5s ease;}
+@keyframes trophySpin{0%{transform:rotate(-20deg) scale(0);opacity:0;}60%{transform:rotate(10deg) scale(1.2);}100%{transform:rotate(0deg) scale(1);opacity:1;}}
+.result-title{font-family:'Orbitron',monospace;font-size:clamp(1.3rem,4vw,2.2rem);margin:12px 0;background:linear-gradient(135deg,var(--gold),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.result-score-big{font-family:'Orbitron',monospace;font-size:clamp(2.5rem,8vw,4.5rem);color:var(--gold);font-weight:900;text-shadow:0 0 40px rgba(245,200,66,.5);}
+.result-breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0;}
+.result-stat{background:var(--bg3);border-radius:11px;padding:13px;border:1px solid rgba(255,255,255,.1);}
+.result-stat-val{font-family:'Orbitron',monospace;font-size:1.5rem;font-weight:700;display:block;}
+.result-stat-label{font-size:.7rem;opacity:.6;text-transform:uppercase;letter-spacing:.1em;}
+.rank-badge{display:inline-block;padding:7px 22px;border-radius:28px;font-family:'Orbitron',monospace;font-size:.95rem;font-weight:700;letter-spacing:.12em;margin:12px 0;}
+.player-result-card{background:rgba(245,200,66,.08);border:1px solid rgba(245,200,66,.25);border-radius:12px;padding:13px;margin:12px 0;display:flex;align-items:center;gap:12px;}
+
+/* ====== LEADERBOARD ====== */
+.lb-filters{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:15px;}
+.lb-filter-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:5px 16px;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:.8rem;cursor:pointer;transition:all .2s;}
+.lb-filter-btn.active,.lb-filter-btn:hover{background:rgba(245,200,66,.2);border-color:var(--gold);color:var(--gold);}
+.leaderboard-list{list-style:none;}
+.lb-item{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:10px;margin-bottom:7px;background:var(--bg3);transition:all .2s;}
+.lb-item:hover{transform:translateX(3px);}
+.lb-rank{font-family:'Orbitron',monospace;font-size:1.1rem;font-weight:700;width:32px;text-align:center;}
+.lb-rank.gold{color:#FFD700;}
+.lb-rank.silver{color:#C0C0C0;}
+.lb-rank.bronze{color:#CD7F32;}
+.lb-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+.lb-info{flex:1;}
+.lb-name{font-weight:700;font-size:.95rem;}
+.lb-meta{font-size:.72rem;opacity:.55;}
+.lb-score{font-family:'Orbitron',monospace;color:var(--gold);font-weight:700;}
+.lb-mode-tag{font-size:.65rem;padding:2px 8px;border-radius:10px;background:rgba(78,205,196,.15);color:var(--accent);border:1px solid rgba(78,205,196,.3);}
+
+/* ====== BUTTONS ====== */
+.btn{display:inline-block;padding:13px 30px;border-radius:10px;font-family:'Orbitron',monospace;font-size:.82rem;font-weight:700;letter-spacing:.1em;cursor:pointer;transition:all .25s;border:none;text-transform:uppercase;}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1a0e00;}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(245,200,66,.4);}
+.btn-outline{background:transparent;border:2px solid rgba(255,255,255,.3);color:var(--text);}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold);transform:translateY(-2px);}
+.btn-green{background:linear-gradient(135deg,var(--green),var(--green-dark));color:white;}
+.btn-green:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(29,185,84,.4);}
+.btn-purple{background:linear-gradient(135deg,var(--purple),#6c3483);color:white;}
+.btn-purple:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(155,89,182,.4);}
+.btn-blue{background:linear-gradient(135deg,var(--blue),#1a5276);color:white;}
+.btn-blue:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(52,152,219,.4);}
+.btn-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:20px;}
+.section-title{font-family:'Orbitron',monospace;font-size:clamp(1.1rem,3.5vw,1.6rem);color:var(--gold);text-align:center;margin:18px 0;letter-spacing:.05em;}
+.section-sub{text-align:center;opacity:.6;font-size:.9rem;margin-bottom:20px;}
+
+/* ====== FX ====== */
+.combo-indicator{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:rgba(245,200,66,.9);color:#1a0e00;font-family:'Orbitron',monospace;font-size:1.4rem;font-weight:900;padding:7px 22px;border-radius:28px;z-index:200;animation:comboPop 1s ease forwards;pointer-events:none;white-space:nowrap;}
+@keyframes comboPop{0%{transform:translateX(-50%) scale(0) translateY(20px);opacity:0;}20%{transform:translateX(-50%) scale(1.2) translateY(0);opacity:1;}70%{transform:translateX(-50%) scale(1) translateY(0);opacity:1;}100%{transform:translateX(-50%) scale(.8) translateY(-30px);opacity:0;}}
+.confetti-particle{position:fixed;width:10px;height:10px;pointer-events:none;z-index:300;animation:confettiFall linear forwards;}
+@keyframes confettiFall{0%{transform:translateY(-20px) rotate(0deg);opacity:1;}100%{transform:translateY(100vh) rotate(720deg);opacity:0;}}
+.score-float{position:fixed;font-family:'Orbitron',monospace;font-size:1.4rem;font-weight:900;color:var(--gold);pointer-events:none;z-index:200;animation:scoreFloatUp 1s ease forwards;}
+@keyframes scoreFloatUp{0%{transform:translateY(0) scale(0);opacity:0;}20%{transform:translateY(-10px) scale(1.2);opacity:1;}100%{transform:translateY(-80px) scale(.8);opacity:0;}}
+.damage-text{position:fixed;font-family:'Orbitron',monospace;font-size:1.8rem;font-weight:900;pointer-events:none;z-index:200;animation:scoreFloatUp 1s ease forwards;}
+.dmg-red{color:var(--red);}
+.dmg-green{color:var(--green);}
+
+/* ====== MISC ====== */
+.divider{height:1px;background:rgba(255,255,255,.1);margin:20px 0;}
+.alert-box{background:rgba(245,200,66,.1);border:1px solid rgba(245,200,66,.3);border-radius:10px;padding:12px 16px;font-size:.9rem;line-height:1.5;margin:12px 0;}
+.text-gold{color:var(--gold);}
+.text-accent{color:var(--accent);}
+.text-green{color:var(--green);}
+.text-red{color:var(--red);}
+.text-center{text-align:center;}
+.mt-10{margin-top:10px;}
+.mt-20{margin-top:20px;}
+@media(max-width:600px){
+  .options-grid{grid-template-columns:1fr;}
+  .difficulty-grid{grid-template-columns:1fr;}
+  .result-breakdown{grid-template-columns:1fr;}
+  .fps-choices{grid-template-columns:1fr;}
+  .mode-grid{grid-template-columns:repeat(2,1fr);}
+}
+</style>
+</head>
+<body>
+<div id="stars"></div>
+<div class="geo-pattern"></div>
+<div class="crescent"></div>
+<div class="overlay" id="overlay"></div>
+<div class="feedback" id="feedback">
+  <span class="feedback-emoji" id="fb-emoji"></span>
+  <div class="feedback-title" id="fb-title"></div>
+  <div class="feedback-info" id="fb-info"></div>
+  <div class="feedback-points" id="fb-points"></div>
+</div>
+
+<div class="container">
+
+<!-- ======= REGISTRATION SCREEN ======= -->
+<div class="screen active" id="screen-register">
+  <div class="reg-wrap">
+    <div class="reg-logo">زكاة</div>
+    <div class="reg-title">ZAKAT QUEST</div>
+    <div class="reg-sub">Game Edukasi Interaktif Ilmu Zakat</div>
+    <div class="reg-card">
+      <h3>⚔️ DAFTAR PETUALANG</h3>
+      <div class="field-group">
+        <label>👤 Nama Lengkap</label>
+        <input type="text" id="reg-name" placeholder="Masukkan nama kamu..." maxlength="30">
+      </div>
+      <div class="field-group">
+        <label>🏫 Kelas</label>
+        <select id="reg-class">
+          <option value="">-- Pilih Kelas --</option>
+          <option value="Kelas 7A">Kelas 7A</option>
+          <option value="Kelas 7B">Kelas 7B</option>
+          <option value="Kelas 7C">Kelas 7C</option>
+          <option value="Kelas 8A">Kelas 8A</option>
+          <option value="Kelas 8B">Kelas 8B</option>
+          <option value="Kelas 8C">Kelas 8C</option>
+          <option value="Kelas 9A">Kelas 9A</option>
+          <option value="Kelas 9B">Kelas 9B</option>
+          <option value="Kelas 9C">Kelas 9C</option>
+          <option value="Kelas 10">Kelas 10</option>
+          <option value="Kelas 11">Kelas 11</option>
+          <option value="Kelas 12">Kelas 12</option>
+          <option value="Mahasiswa">Mahasiswa</option>
+          <option value="Umum">Umum</option>
+        </select>
+      </div>
+      <button class="btn btn-gold" style="width:100%;margin-top:8px;" onclick="registerPlayer()">🚀 MULAI PETUALANGAN!</button>
+      <div class="reg-note">* Data kamu akan tampil di papan skor</div>
+    </div>
+  </div>
+</div>
+
+<!-- ======= HOME SCREEN ======= -->
+<div class="screen" id="screen-home">
+  <div class="home-screen">
+    <div class="logo-arabic" style="font-family:'Amiri',serif;font-size:clamp(2.5rem,8vw,5rem);background:linear-gradient(135deg,var(--gold),var(--gold2),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:pulse 2s ease-in-out infinite alternate;line-height:1;">زكاة</div>
+    <div style="font-family:'Orbitron',monospace;font-size:clamp(1rem,3vw,1.7rem);color:var(--accent);letter-spacing:.3em;margin:8px 0;">ZAKAT QUEST</div>
+    <div style="opacity:.65;font-size:.95rem;margin-bottom:20px;font-style:italic;">Uji Ilmu Zakatmu — Raih Pahala Pengetahuan!</div>
+
+    <div class="player-badge" onclick="showScreen('screen-register')">
+      <div class="player-avatar">🧕</div>
+      <div class="player-info">
+        <div class="player-name-display" id="home-player-name">—</div>
+        <div class="player-class-display" id="home-player-class">—</div>
+      </div>
+      <span style="opacity:.4;margin-left:5px;font-size:.8rem;">✏️ ubah</span>
+    </div>
+
+    <div class="stats-bar">
+      <div class="stat-item"><span class="stat-value" id="hs-score">0</span><span class="stat-label">Skor Terbaik</span></div>
+      <div class="stat-item"><span class="stat-value" id="hs-games">0</span><span class="stat-label">Game</span></div>
+      <div class="stat-item"><span class="stat-value" id="hs-streak">0</span><span class="stat-label">Streak Max</span></div>
+    </div>
+
+    <div class="mode-grid">
+      <div class="mode-card" onclick="selectMode('quiz')">
+        <span class="mode-icon">🕌</span>
+        <div class="mode-title">Kuis Zakat</div>
+        <div class="mode-desc">20 soal pilihan ganda hukum & jenis zakat dengan lifeline</div>
+        <span class="mode-badge badge-easy">PILIHAN GANDA</span>
+      </div>
+      <div class="mode-card" onclick="selectMode('calc')">
+        <span class="mode-icon">🧮</span>
+        <div class="mode-title">Hitung Zakat</div>
+        <div class="mode-desc">Hitung nominal zakat fitrah, maal, profesi & lebih</div>
+        <span class="mode-badge badge-medium">HITUNGAN</span>
+      </div>
+      <div class="mode-card" onclick="selectMode('speed')">
+        <span class="mode-icon">⚡</span>
+        <div class="mode-title">Speed Round</div>
+        <div class="mode-desc">Jawab sebanyak mungkin dalam 60 detik!</div>
+        <span class="mode-badge badge-hard">TANTANGAN</span>
+      </div>
+      <div class="mode-card" onclick="selectMode('rpg')">
+        <span class="mode-icon">⚔️</span>
+        <div class="mode-title">RPG Muzakki</div>
+        <div class="mode-desc">Jadilah pahlawan! Kalahkan musul kejahilan dengan ilmu zakat</div>
+        <span class="mode-badge badge-epic">RPG QUEST</span>
+      </div>
+      <div class="mode-card" onclick="selectMode('fps')">
+        <span class="mode-icon">🎯</span>
+        <div class="mode-title">Zakat POV</div>
+        <div class="mode-desc">FPS — Rasakan sendiri pengalaman membayar zakat dari sudut pandang orang pertama</div>
+        <span class="mode-badge badge-fps">FIRST PERSON</span>
+      </div>
+    </div>
+
+    <button class="btn btn-outline" onclick="showScreen('screen-leaderboard')">🏆 Papan Skor</button>
+  </div>
+</div>
+
+<!-- ======= DIFFICULTY SCREEN ======= -->
+<div class="screen" id="screen-difficulty">
+  <div class="section-title" id="diff-mode-name">Pilih Kesulitan</div>
+  <div class="section-sub">Semakin sulit, semakin tinggi poin multiplier-nya!</div>
+  <div class="difficulty-grid">
+    <div class="diff-card easy" onclick="startGame('easy')">
+      <span class="diff-icon">🌱</span>
+      <div class="diff-name" style="color:var(--green)">MUDAH</div>
+      <div class="diff-desc">Waktu 35 detik<br>Poin ×1</div>
+    </div>
+    <div class="diff-card medium" onclick="startGame('medium')">
+      <span class="diff-icon">🌙</span>
+      <div class="diff-name" style="color:var(--gold)">SEDANG</div>
+      <div class="diff-desc">Waktu 20 detik<br>Poin ×2</div>
+    </div>
+    <div class="diff-card hard" onclick="startGame('hard')">
+      <span class="diff-icon">⚡</span>
+      <div class="diff-name" style="color:var(--red)">SULIT</div>
+      <div class="diff-desc">Waktu 12 detik<br>Poin ×3</div>
+    </div>
+  </div>
+  <div class="btn-row"><button class="btn btn-outline" onclick="showScreen('screen-home')">← Kembali</button></div>
+</div>
+
+<!-- ======= QUIZ SCREEN ======= -->
+<div class="screen" id="screen-quiz">
+  <div class="game-hud">
+    <div class="hud-item"><span class="hud-label">Skor</span><span class="hud-value hud-score" id="q-score">0</span></div>
+    <div class="hud-item"><span class="hud-label">Nyawa</span><span class="hud-value hud-lives" id="q-lives">❤️❤️❤️</span></div>
+    <div class="hud-item"><span class="hud-label">Streak</span><span class="hud-value hud-streak" id="q-streak">🔥0</span></div>
+    <div class="hud-item"><span class="hud-label">Soal</span><span class="hud-value hud-level" id="q-num">1/20</span></div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="q-progress" style="width:0%"></div></div>
+  <div class="timer-container">
+    <div class="timer-bar"><div class="timer-fill" id="q-timer-fill" style="width:100%"></div></div>
+    <div class="timer-text" id="q-timer-text">30s</div>
+  </div>
+  <div class="question-card">
+    <span class="question-category" id="q-category">FIQH ZAKAT</span>
+    <span class="question-number" id="q-number-display">1/20</span>
+    <div style="clear:both;height:8px;"></div>
+    <div class="question-text" id="q-text"></div>
+  </div>
+  <div class="options-grid" id="q-options"></div>
+  <div class="lifelines">
+    <button class="lifeline-btn" id="ll-50" onclick="useFiftyFifty()"><span class="ll-icon">✂️</span>50:50</button>
+    <button class="lifeline-btn" id="ll-skip" onclick="useSkip()"><span class="ll-icon">⏭️</span>Lewati</button>
+    <button class="lifeline-btn" id="ll-time" onclick="useTimeBonus()"><span class="ll-icon">⏱️</span>+10 Detik</button>
+  </div>
+  <div class="btn-row" style="margin-top:5px;"><button class="btn btn-outline" style="padding:7px 18px;font-size:.7rem;" onclick="quitGame()">✕ Keluar</button></div>
+</div>
+
+<!-- ======= CALC SCREEN ======= -->
+<div class="screen" id="screen-calc">
+  <div class="game-hud">
+    <div class="hud-item"><span class="hud-label">Skor</span><span class="hud-value hud-score" id="c-score">0</span></div>
+    <div class="hud-item"><span class="hud-label">Soal</span><span class="hud-value hud-level" id="c-num">1/10</span></div>
+    <div class="hud-item"><span class="hud-label">Streak</span><span class="hud-value hud-streak" id="c-streak">🔥0</span></div>
+    <div class="hud-item"><span class="hud-label">Nyawa</span><span class="hud-value hud-lives" id="c-lives">❤️❤️❤️</span></div>
+  </div>
+  <div class="timer-container">
+    <div class="timer-bar"><div class="timer-fill" id="c-timer-fill" style="width:100%"></div></div>
+    <div class="timer-text" id="c-timer-text">45s</div>
+  </div>
+  <div class="calc-display"><div class="calc-problem" id="calc-problem"></div></div>
+  <div class="calc-input-row">
+    <input type="number" class="calc-input" id="calc-answer" placeholder="Jawaban..." onkeydown="if(event.key==='Enter')checkCalcAnswer()">
+    <button class="btn btn-gold" onclick="checkCalcAnswer()">✓</button>
+  </div>
+  <div class="btn-row" style="margin-top:12px;"><button class="btn btn-outline" style="padding:7px 18px;font-size:.7rem;" onclick="quitGame()">✕ Keluar</button></div>
+</div>
+
+<!-- ======= SPEED SCREEN ======= -->
+<div class="screen" id="screen-speed">
+  <div class="game-hud">
+    <div class="hud-item"><span class="hud-label">Skor</span><span class="hud-value hud-score" id="s-score">0</span></div>
+    <div class="hud-item"><span class="hud-label">Waktu</span><span class="hud-value" style="color:var(--accent)" id="s-time">60</span></div>
+    <div class="hud-item"><span class="hud-label">Benar</span><span class="hud-value" style="color:var(--green)" id="s-correct">0</span></div>
+    <div class="hud-item"><span class="hud-label">Streak</span><span class="hud-value hud-streak" id="s-streak">🔥0</span></div>
+  </div>
+  <div class="timer-bar" style="margin-bottom:18px;"><div class="timer-fill" id="s-timer-fill" style="width:100%"></div></div>
+  <div class="question-card">
+    <span class="question-category" id="s-category">⚡ SPEED ROUND</span>
+    <div style="height:8px;"></div>
+    <div class="question-text" id="s-text"></div>
+  </div>
+  <div class="options-grid" id="s-options"></div>
+  <div class="btn-row" style="margin-top:12px;"><button class="btn btn-outline" style="padding:7px 18px;font-size:.7rem;" onclick="quitGame()">✕ Keluar</button></div>
+</div>
+
+<!-- ======= RPG SCREEN ======= -->
+<div class="screen" id="screen-rpg">
+  <div class="game-hud">
+    <div class="hud-item"><span class="hud-label">Poin</span><span class="hud-value hud-score" id="r-score">0</span></div>
+    <div class="hud-item"><span class="hud-label" id="r-hp-label">HP Musuh</span><span class="hud-value" style="color:var(--red)" id="r-hp">100</span></div>
+    <div class="hud-item"><span class="hud-label">Level</span><span class="hud-value" style="color:var(--purple)" id="r-level">1</span></div>
+    <div class="hud-item"><span class="hud-label">XP</span><span class="hud-value" style="color:var(--accent)" id="r-xp">0</span></div>
+  </div>
+
+  <div class="rpg-scene" id="rpg-scene">
+    <div class="rpg-bg">
+      <div class="rpg-stars-sm" id="rpg-bg-stars"></div>
+    </div>
+    <div class="rpg-ground"></div>
+    <div class="rpg-mosque">🕌</div>
+    <div class="rpg-char" id="rpg-char">🧕</div>
+    <div class="rpg-npc" id="rpg-npc">👺</div>
+    <div class="rpg-dialog">
+      <div class="rpg-dialog-name" id="rpg-dialog-name">MUSUH KEJAHILAN</div>
+      <div class="rpg-dialog-text" id="rpg-dialog-text">Ha ha ha! Kamu tidak tahu apa itu zakat? Jawab pertanyaanku atau aku kuasai desa ini!</div>
+    </div>
+  </div>
+
+  <div style="margin:12px 0;">
+    <div style="display:flex;gap:10px;margin-bottom:6px;">
+      <div style="flex:1;">
+        <div class="rpg-hp-label">⚔️ HP Musuh</div>
+        <div class="rpg-hp-track"><div class="rpg-hp-fill enemy-hp-fill" id="rpg-enemy-hp-bar" style="width:100%"></div></div>
+      </div>
+      <div style="flex:1;">
+        <div class="rpg-hp-label">💪 XP Kamu</div>
+        <div class="rpg-hp-track"><div class="rpg-hp-fill rpg-xp-fill" id="rpg-xp-bar" style="width:0%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="question-card" id="rpg-question-card">
+    <span class="question-category">⚔️ SERANGAN MUSUH</span>
+    <div style="height:8px;"></div>
+    <div class="question-text" id="rpg-q-text"></div>
+  </div>
+  <div class="options-grid" id="rpg-options"></div>
+  <div class="rpg-action-btns" style="margin-top:8px;">
+    <div style="font-size:.8rem;opacity:.6;text-align:center;">💡 Jawab dengan benar untuk menyerang musuh!</div>
+  </div>
+  <div class="btn-row" style="margin-top:8px;"><button class="btn btn-outline" style="padding:7px 18px;font-size:.7rem;" onclick="quitGame()">✕ Keluar</button></div>
+</div>
+
+<!-- ======= FPS SCREEN ======= -->
+<div class="screen" id="screen-fps">
+  <div class="fps-screen">
+    <div class="fps-viewport" id="fps-viewport">
+      <div class="fps-sky"></div>
+      <div class="fps-sun"></div>
+      <div class="fps-ground"></div>
+      <div class="fps-road"></div>
+      <div class="fps-mosque-3d" id="fps-mosque">🕌</div>
+      <div class="fps-npc-sprite" id="fps-npc" style="bottom:45%;left:30%;font-size:3.5rem;">🧓</div>
+      <div class="fps-crosshair"></div>
+      <div class="fps-hud-overlay">
+        <div class="fps-health" id="fps-health">💚 IMAN: 100</div>
+        <div class="fps-ammo" id="fps-ammo">💰 ZAKAT: 0</div>
+        <div class="fps-objective" id="fps-objective">🎯 Temui Pak Amil di Masjid</div>
+      </div>
+    </div>
+    <div class="fps-stat-bar">
+      <div class="fps-stat"><span style="color:var(--gold);" id="fps-score-display">Skor: 0</span></div>
+      <div class="fps-stat"><span style="color:var(--accent);" id="fps-scene-display">Scene 1/6</span></div>
+      <div class="fps-stat"><span style="color:var(--green);" id="fps-xp-display">Pahala: 0</span></div>
+    </div>
+  </div>
+  <div class="fps-action-prompt" id="fps-prompt">
+    <div id="fps-dialog" style="margin-bottom:10px;font-style:italic;opacity:.8;">"Assalamu'alaikum, Nak. Sudahkah kamu tahu tentang kewajiban zakat?"</div>
+    <div id="fps-speaker" style="font-size:.75rem;color:var(--gold);margin-bottom:10px;">— Pak Amil Zakat</div>
+    <div id="fps-question" style="font-weight:700;font-size:1rem;margin-bottom:5px;"></div>
+  </div>
+  <div class="fps-choices" id="fps-choices"></div>
+  <div class="btn-row" style="margin-top:5px;"><button class="btn btn-outline" style="padding:7px 18px;font-size:.7rem;" onclick="quitGame()">✕ Keluar</button></div>
+</div>
+
+<!-- ======= RESULT SCREEN ======= -->
+<div class="screen" id="screen-result">
+  <div class="result-screen">
+    <span class="result-trophy" id="result-trophy">🏆</span>
+    <div class="result-title" id="result-title">LUAR BIASA!</div>
+    <div style="opacity:.6;margin-bottom:8px;">Skor Akhir</div>
+    <div class="result-score-big" id="result-score">0</div>
+    <div class="rank-badge" id="result-rank"></div>
+    <div class="player-result-card">
+      <div style="font-size:2rem;">🧕</div>
+      <div>
+        <div style="font-family:'Orbitron',monospace;color:var(--gold);font-size:.9rem;" id="res-player-name">—</div>
+        <div style="font-size:.78rem;opacity:.6;" id="res-player-class">—</div>
+      </div>
+    </div>
+    <div class="result-breakdown">
+      <div class="result-stat"><span class="result-stat-val" id="res-correct">0</span><span class="result-stat-label">Jawaban Benar</span></div>
+      <div class="result-stat"><span class="result-stat-val" id="res-streak">0</span><span class="result-stat-label">Streak Terbaik</span></div>
+      <div class="result-stat"><span class="result-stat-val" id="res-accuracy">0%</span><span class="result-stat-label">Akurasi</span></div>
+    </div>
+    <div id="result-message" class="alert-box"></div>
+    <div class="btn-row">
+      <button class="btn btn-gold" onclick="playAgain()">🔄 Main Lagi</button>
+      <button class="btn btn-green" onclick="showScreen('screen-home')">🏠 Beranda</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======= LEADERBOARD SCREEN ======= -->
+<div class="screen" id="screen-leaderboard">
+  <div class="section-title">🏆 Papan Peringkat</div>
+  <div class="section-sub">Daftar petualang terbaik</div>
+  <div class="lb-filters">
+    <button class="lb-filter-btn active" onclick="filterLB('all',this)">Semua</button>
+    <button class="lb-filter-btn" onclick="filterLB('Kuis',this)">Kuis</button>
+    <button class="lb-filter-btn" onclick="filterLB('Hitungan',this)">Hitungan</button>
+    <button class="lb-filter-btn" onclick="filterLB('Speed',this)">Speed</button>
+    <button class="lb-filter-btn" onclick="filterLB('RPG',this)">RPG</button>
+    <button class="lb-filter-btn" onclick="filterLB('FPS',this)">FPS POV</button>
+  </div>
+  <ul class="leaderboard-list" id="lb-list"></ul>
+  <div class="btn-row"><button class="btn btn-outline" onclick="showScreen('screen-home')">← Kembali</button></div>
+</div>
+
+</div><!-- end .container -->
+
+<script>
+// ============================================================
+// QUESTION BANKS
+// ============================================================
+const quizQuestions = [
+  {q:"Zakat berasal dari bahasa Arab yang artinya...",opts:["Suci dan berkembang","Sedekah wajib","Harta melimpah","Pemberian ikhlas"],ans:0,cat:"DASAR ZAKAT",info:"Kata 'zakat' dari 'zakā' berarti suci, bersih, tumbuh, dan berkah. Zakat menyucikan harta dan jiwa muzakki."},
+  {q:"Zakat adalah rukun Islam yang ke berapa?",opts:["Ketiga","Keempat","Kedua","Kelima"],ans:0,cat:"DASAR ZAKAT",info:"Zakat adalah rukun Islam ketiga, setelah syahadat dan sholat, sebelum puasa dan haji."},
+  {q:"Orang yang berhak menerima zakat disebut...",opts:["Mustahiq","Muzakki","Amil","Gharim"],ans:0,cat:"DASAR ZAKAT",info:"Mustahiq adalah penerima zakat. Muzakki adalah pembayar zakat."},
+  {q:"Berapa nisab zakat emas?",opts:["85 gram","93,6 gram","95 gram","75 gram"],ans:0,cat:"ZAKAT MAL",info:"Nisab zakat emas adalah 85 gram emas murni. Jika tercapai dan haul 1 tahun, wajib dizakati 2,5%."},
+  {q:"Berapa persen kadar zakat maal (harta)?",opts:["2,5%","5%","10%","20%"],ans:0,cat:"ZAKAT MAL",info:"Kadar zakat maal adalah 2,5% dari total harta yang telah mencapai nisab dan haul satu tahun."},
+  {q:"Zakat fitrah wajib dikeluarkan pada bulan...",opts:["Ramadhan","Syawal","Dzulhijjah","Muharram"],ans:0,cat:"ZAKAT FITRAH",info:"Zakat fitrah wajib di bulan Ramadhan, batas akhir sebelum sholat Idul Fitri."},
+  {q:"Besaran zakat fitrah per orang adalah...",opts:["2,5 kg makanan pokok","1 kg beras","3 kg beras","2 liter beras"],ans:0,cat:"ZAKAT FITRAH",info:"Zakat fitrah = 1 sha' ≈ 2,5–3 kg bahan makanan pokok. Indonesia umumnya 2,5 kg beras."},
+  {q:"Haul dalam syarat zakat berarti...",opts:["Harta dimiliki 1 tahun","Harta cukup nisab","Pemilik sudah dewasa","Harta untuk bisnis"],ans:0,cat:"SYARAT ZAKAT",info:"Haul adalah syarat harta telah dimiliki selama satu tahun penuh sebelum wajib dizakati."},
+  {q:"8 golongan penerima zakat disebutkan dalam surat...",opts:["At-Taubah: 60","Al-Baqarah: 177","Al-Maidah: 12","An-Nisa: 92"],ans:0,cat:"DASAR ZAKAT",info:"QS. At-Taubah ayat 60: fakir, miskin, amil, muallaf, riqab, gharim, fi sabilillah, ibnu sabil."},
+  {q:"Amil zakat adalah...",opts:["Pengelola & pengumpul zakat","Orang kaya pembayar zakat","Orang baru masuk Islam","Musafir kehabisan bekal"],ans:0,cat:"MUSTAHIQ",info:"Amil adalah orang/lembaga yang bertugas mengumpulkan dan mendistribusikan zakat."},
+  {q:"Nisab zakat pertanian adalah...",opts:["5 wasaq ≈ 653 kg","10 wasaq","3 wasaq","7 wasaq"],ans:0,cat:"ZAKAT MAL",info:"Nisab zakat pertanian 5 wasaq ≈ 653 kg. Kadar 10% (hujan) atau 5% (irigasi)."},
+  {q:"Fi sabilillah dalam asnaf zakat berarti...",opts:["Berjuang di jalan Allah","Orang yang berhaji","Membangun masjid","Berdakwah saja"],ans:0,cat:"MUSTAHIQ",info:"Fi sabilillah: orang yang berjuang di jalan Allah, termasuk pendidikan dan dakwah Islam."},
+  {q:"Nisab zakat perak adalah...",opts:["595 gram","500 gram","400 gram","700 gram"],ans:0,cat:"ZAKAT MAL",info:"Nisab zakat perak = 200 dirham ≈ 595 gram. Kadar zakat sama dengan emas: 2,5%."},
+  {q:"Ibnu Sabil dalam mustahiq zakat adalah...",opts:["Musafir kehabisan bekal","Anak yatim piatu","Orang tua jompo","Pelajar kurang mampu"],ans:0,cat:"MUSTAHIQ",info:"Ibnu Sabil = musafir (orang dalam perjalanan) yang kehabisan bekal atau terputus dari sumber dana."},
+  {q:"Muallaf sebagai penerima zakat adalah...",opts:["Orang baru masuk Islam","Ustaz mengajar ngaji","Orang yang rajin sholat","Pemimpin masjid"],ans:0,cat:"MUSTAHIQ",info:"Muallaf = orang baru masuk Islam atau yang hatinya perlu dilunakkan agar condong pada Islam."},
+  {q:"Zakat profesi dianalogikan dengan zakat...",opts:["Zakat pertanian","Zakat perdagangan","Zakat ternak","Zakat emas"],ans:0,cat:"ZAKAT KONTEMPORER",info:"Mayoritas ulama kontemporer menganalogikan zakat profesi dengan zakat pertanian."},
+  {q:"Riqab sebagai asnaf zakat berarti...",opts:["Hamba sahaya/budak","Orang teraniaya","Anak terlantar","Narapidana"],ans:0,cat:"MUSTAHIQ",info:"Riqab = hamba sahaya yang ingin memerdekakan diri. Zakat bisa untuk menebus kebebasan mereka."},
+  {q:"Gharim adalah asnaf yang berarti...",opts:["Terlilit hutang","Sangat miskin","Janda ditinggal","Korban bencana"],ans:0,cat:"MUSTAHIQ",info:"Gharim = orang terjerat hutang untuk kebutuhan hidup yang layak, bukan untuk kemewahan/maksiat."},
+  {q:"Perbedaan fakir dan miskin dalam zakat adalah...",opts:["Fakir lebih tidak mampu","Miskin lebih tidak mampu","Keduanya sama","Fakir punya kerja"],ans:0,cat:"MUSTAHIQ",info:"Fakir = tidak punya harta dan pekerjaan sama sekali. Miskin = punya penghasilan tapi tidak cukup."},
+  {q:"Harta yang digunakan untuk kebutuhan pokok...",opts:["Tidak dihitung nisab","Dihitung penuh","Dihitung setengah","Tergantung penggunaan"],ans:0,cat:"ZAKAT MAL",info:"Rumah tinggal, kendaraan pakai, pakaian untuk kebutuhan pokok tidak dihitung dalam nisab."},
+  {q:"Zakat hasil laut (ikan, dll) termasuk dalam zakat...",opts:["Zakat profesi/hasil kerja","Zakat pertanian","Zakat perdagangan","Zakat maal biasa"],ans:0,cat:"ZAKAT KONTEMPORER",info:"Hasil laut termasuk zakat profesi/penghasilan menurut banyak ulama kontemporer."},
+  {q:"Wakaf berbeda dengan zakat karena...",opts:["Wakaf tidak wajib dan permanen","Wakaf wajib bagi yang mampu","Wakaf hanya untuk masjid","Wakaf sama dengan infaq"],ans:0,cat:"DASAR ZAKAT",info:"Wakaf tidak wajib (sunnah), harta diserahkan secara permanen. Zakat wajib dan didistribusikan kepada asnaf."},
+  {q:"Lembaga zakat resmi pemerintah Indonesia adalah...",opts:["BAZNAS","LAZNAS","LAZ","LAZIS"],ans:0,cat:"ZAKAT KONTEMPORER",info:"BAZNAS (Badan Amil Zakat Nasional) adalah lembaga zakat resmi pemerintah Indonesia berdasarkan UU No. 23/2011."},
+  {q:"Zakat ternak unta baru wajib jika berjumlah...",opts:["5 ekor","10 ekor","3 ekor","8 ekor"],ans:0,cat:"ZAKAT MAL",info:"Nisab zakat unta dimulai dari 5 ekor. Zakat berupa 1 ekor kambing dari usia tertentu."},
+  {q:"Infaq berbeda dengan zakat karena...",opts:["Infaq tidak ada nisab dan haul","Infaq lebih besar nilainya","Infaq wajib seperti zakat","Infaq hanya di Ramadhan"],ans:0,cat:"DASAR ZAKAT",info:"Infaq adalah pengeluaran sukarela tanpa nisab dan haul tertentu. Zakat wajib dengan syarat-syarat tertentu."},
+  {q:"Zakat emas perhiasan yang dipakai sehari-hari...",opts:["Khilafiyah: sebagian ulama wajib","Wajib dizakati semua","Tidak wajib sama sekali","Wajib jika mewah"],ans:0,cat:"ZAKAT MAL",info:"Hukum zakat emas perhiasan dipakai adalah khilafiyah (perbedaan pendapat). Sebagian ulama wajib, sebagian tidak."},
+  {q:"Berapa tahun sekali zakat fitrah dikeluarkan?",opts:["Setiap tahun, satu kali","Dua kali setahun","Setiap 3 tahun","Sesuai kemampuan"],ans:0,cat:"ZAKAT FITRAH",info:"Zakat fitrah dikeluarkan sekali setahun, di bulan Ramadhan menjelang Idul Fitri."},
+  {q:"Yang dimaksud nisab adalah...",opts:["Batas minimum harta kena zakat","Batas waktu kepemilikan harta","Nama lembaga zakat","Cara perhitungan zakat"],ans:0,cat:"DASAR ZAKAT",info:"Nisab adalah batas minimum harta yang jika tercapai, seseorang wajib mengeluarkan zakat."},
+  {q:"Zakat perdagangan dikeluarkan dari...",opts:["Total modal + keuntungan","Keuntungan saja","Modal saja","Harga jual barang"],ans:0,cat:"ZAKAT MAL",info:"Zakat perdagangan dihitung dari seluruh aset usaha: modal + keuntungan + piutang - utang dagang."},
+  {q:"Orang yang wajib membayar zakat fitrah adalah...",opts:["Setiap Muslim yang mampu","Hanya kepala keluarga","Hanya yang sudah bekerja","Hanya orang dewasa"],ans:0,cat:"ZAKAT FITRAH",info:"Setiap Muslim yang memiliki kelebihan makanan untuk dirinya dan keluarganya di malam dan hari raya Idul Fitri wajib zakat fitrah."}
+];
+
+const calcProblems = [
+  {type:"fitrah",q:"Pak Ahmad memiliki keluarga: dirinya, istri, dan 2 anak. Harga beras Rp 12.000/kg, zakat fitrah 2,5 kg/orang. Berapa total zakat fitrah (Rupiah)?",ans:120000,hint:"4 orang × 2,5 kg × Rp 12.000",cat:"ZAKAT FITRAH"},
+  {type:"profesi",q:"Pak Budi gaji Rp 10.000.000/bulan. Nisab zakat profesi setara Rp 6.500.000/bulan, kadar 2,5%. Berapa zakat profesinya (Rupiah)?",ans:250000,hint:"2,5% × Rp 10.000.000 = Rp 250.000",cat:"ZAKAT PROFESI"},
+  {type:"pertanian",q:"Pak Tani panen 2.000 kg padi dari sawah diairi hujan. Nisab 653 kg, kadar 10%. Berapa zakatnya (kg)?",ans:200,hint:"10% × 2.000 = 200 kg",cat:"ZAKAT PERTANIAN"},
+  {type:"perdagangan",q:"Pedagang: modal Rp 100 jt + keuntungan Rp 20 jt. Total aset Rp 120 jt. Zakat 2,5%. Berapa zakatnya (Rupiah)?",ans:3000000,hint:"2,5% × Rp 120.000.000 = Rp 3.000.000",cat:"ZAKAT PERDAGANGAN"},
+  {type:"fitrah",q:"Yayasan dengan 120 anak asuh. Beras Rp 15.000/kg, zakat fitrah 2,5 kg/orang. Total zakat fitrah (Rupiah)?",ans:4500000,hint:"120 × 2,5 × Rp 15.000 = Rp 4.500.000",cat:"ZAKAT FITRAH"},
+  {type:"emas",q:"Ibu punya tabungan emas 90 gram. Nisab 85 gram, emas Rp 1.000.000/gram. Berapa zakatnya (Rupiah)?",ans:2250000,hint:"2,5% × 90 gram × Rp 1.000.000 = Rp 2.250.000",cat:"ZAKAT EMAS"},
+  {type:"profesi",q:"Dokter berpenghasilan Rp 25.000.000/bulan. Kebutuhan pokok Rp 10.000.000. Zakat dari penghasilan bersih (2,5%) = (Rupiah)?",ans:375000,hint:"2,5% × (25 jt - 10 jt) = 2,5% × 15 jt",cat:"ZAKAT PROFESI"},
+  {type:"maal",q:"Seseorang punya tabungan Rp 60 jt + investasi Rp 40 jt = Rp 100 jt. Nisab Rp 85 jt tercapai. Zakat 2,5%?",ans:2500000,hint:"2,5% × Rp 100.000.000 = Rp 2.500.000",cat:"ZAKAT MAL"},
+  {type:"fitrah",q:"Kepala keluarga harus membayar zakat fitrah untuk: dirinya, istri, 3 anak, dan 1 orang tua. Harga beras Rp 14.000/kg, 2,5 kg/orang. Total (Rupiah)?",ans:210000,hint:"6 orang × 2,5 × Rp 14.000",cat:"ZAKAT FITRAH"},
+  {type:"perak",q:"Seseorang punya 600 gram perak. Nisab 595 gram, kadar 2,5%. Harga perak Rp 10.000/gram. Berapa zakatnya (Rupiah)?",ans:150000,hint:"2,5% × 600 gram × Rp 10.000",cat:"ZAKAT PERAK"},
+];
+
+const speedQuestions = [
+  {q:"Zakat adalah rukun Islam ke berapa?",opts:["Ketiga","Kedua","Keempat","Kelima"],ans:0},
+  {q:"Kadar zakat maal adalah?",opts:["2,5%","5%","10%","2%"],ans:0},
+  {q:"Nisab zakat emas?",opts:["85 gram","90 gram","75 gram","100 gram"],ans:0},
+  {q:"Zakat fitrah dibayar di bulan?",opts:["Ramadhan","Syawal","Muharram","Rajab"],ans:0},
+  {q:"Mustahiq artinya?",opts:["Penerima zakat","Pembayar zakat","Pengelola zakat","Hitung zakat"],ans:0},
+  {q:"Muzakki artinya?",opts:["Pembayar zakat","Penerima zakat","Pengelola zakat","Lembaga zakat"],ans:0},
+  {q:"Berapa golongan penerima zakat?",opts:["8","5","7","10"],ans:0},
+  {q:"Amil adalah orang yang?",opts:["Mengelola zakat","Menerima karena miskin","Membayar zakat","Menghitung nisab"],ans:0},
+  {q:"Haul artinya?",opts:["1 tahun kepemilikan","6 bulan","2 tahun","3 bulan"],ans:0},
+  {q:"Zakat pertanian diairi hujan kadarnya?",opts:["10%","5%","2,5%","20%"],ans:0},
+  {q:"Gharim adalah orang yang?",opts:["Terlilit hutang","Sangat miskin","Musafir","Baru masuk Islam"],ans:0},
+  {q:"Ibnu Sabil adalah?",opts:["Musafir kehabisan bekal","Anak yatim","Orang buta","Janda miskin"],ans:0},
+  {q:"Muallaf dalam zakat adalah?",opts:["Baru masuk Islam","Ustaz","Penghafal Quran","Imam masjid"],ans:0},
+  {q:"Nisab zakat perak?",opts:["595 gram","500 gram","650 gram","400 gram"],ans:0},
+  {q:"Zakat fitrah per orang?",opts:["2,5 kg bahan pokok","1 kg beras","5 kg","2 liter"],ans:0},
+  {q:"Fi sabilillah artinya?",opts:["Di jalan Allah","Di rumah Allah","Untuk agama saja","Jihad perang"],ans:0},
+  {q:"Riqab adalah?",opts:["Hamba sahaya","Orang miskin","Korban bencana","Pelajar miskin"],ans:0},
+  {q:"Lembaga zakat nasional Indonesia?",opts:["BAZNAS","LAZNAS","Dompet Dhuafa","Yatim Mandiri"],ans:0},
+  {q:"Zakat di akhir Ramadhan disebut?",opts:["Zakat Fitrah","Zakat Maal","Zakat Profesi","Zakat Perdagangan"],ans:0},
+  {q:"Orang tanpa harta dan pekerjaan disebut?",opts:["Fakir","Miskin","Gharim","Muallaf"],ans:0},
+  {q:"Kadar zakat pertanian diairi irigasi?",opts:["5%","10%","2,5%","15%"],ans:0},
+  {q:"Batas waktu bayar zakat fitrah adalah?",opts:["Sebelum sholat Id","Setelah sholat Id","Akhir Ramadhan","Awal Syawal"],ans:0},
+  {q:"Zakat emas dikenakan setelah haul berapa tahun?",opts:["1 tahun","2 tahun","6 bulan","3 tahun"],ans:0},
+  {q:"Yang bukan termasuk mustahiq zakat adalah?",opts:["Orang kaya","Fakir","Miskin","Gharim"],ans:0},
+  {q:"Nisab zakat pertanian sekitar?",opts:["653 kg","500 kg","800 kg","1000 kg"],ans:0},
+];
+
+// RPG Questions (harder, story-based)
+const rpgQuestions = [
+  {q:"Musuh berteriak: 'Apa dalil utama kewajiban zakat dalam Al-Quran?'",opts:["QS. At-Taubah: 103","QS. Al-Baqarah: 43","QS. Al-Imran: 92","QS. An-Nisa: 77"],ans:0,info:"QS. At-Taubah 103: 'Ambillah zakat dari harta mereka, guna membersihkan dan menyucikan mereka...' adalah ayat kewajiban zakat.",dmg:30},
+  {q:"Si Jahat menyerang: 'Zakat maal minimal berapa persen dan apa syaratnya?'",opts:["2,5%, nisab+haul terpenuhi","5%, cukup nisab","2,5%, kapan saja","10%, setiap tahun"],ans:0,info:"Zakat maal 2,5% dengan dua syarat: harta mencapai nisab (85 gr emas) DAN sudah haul (1 tahun).",dmg:25},
+  {q:"Bos muncul: 'Siapa yang TIDAK berhak menerima zakat?'",opts:["Orang kaya muzakki","Fakir miskin","Amil zakat","Muallaf"],ans:0,info:"Orang kaya (muzakki) tidak berhak menerima zakat. Mereka justru WAJIB mengeluarkan zakat.",dmg:35},
+  {q:"Monster bertanya: 'Harta yang wajib dizakati TIDAK termasuk?'",opts:["Kendaraan untuk dipakai","Emas tabungan","Hasil panen","Uang tabungan"],ans:0,info:"Kendaraan yang dipakai untuk kebutuhan sehari-hari tidak termasuk harta yang wajib dizakati.",dmg:30},
+  {q:"Villain level 2: 'Zakat apa yang membersihkan jiwa, bukan hanya harta?'",opts:["Zakat Fitrah","Zakat Maal","Zakat Profesi","Zakat Perdagangan"],ans:0,info:"Zakat fitrah disebut sebagai pembersih jiwa, menyempurnakan puasa Ramadhan dari kekurangan.",dmg:20},
+  {q:"Final Boss: 'Apa yang terjadi jika seorang Muslim tidak mau membayar zakat?'",opts:["Dosa besar dan bisa dipaksa negara","Tidak apa-apa jika tidak mampu","Hanya makruh","Cukup beristighfar"],ans:0,info:"Tidak membayar zakat adalah dosa besar. Dalam negara Islam, penguasa berhak memaksa muzakki membayar zakat.",dmg:40},
+  {q:"Shadow: 'Apa fungsi utama zakat dalam Islam?'",opts:["Menyucikan harta & menolong sesama","Hanya agar kaya","Menambah tabungan","Ritual semata"],ans:0,info:"Zakat berfungsi menyucikan harta muzakki, membantu mustahiq, dan menciptakan keadilan sosial.",dmg:25},
+  {q:"Nekomancer bertanya: 'Zakat wajib bagi Muslim yang memenuhi syarat yaitu?'",opts:["Islam, merdeka, berakal, baligh, nisab, haul","Islam dan bekerja","Sudah haji","Berusia 40 tahun"],ans:0,info:"Syarat wajib zakat maal: Islam, merdeka, berakal, baligh, harta mencapai nisab, dan sudah haul.",dmg:35},
+];
+
+// FPS POV Story Scenes
+const fpsScenes = [
+  {
+    scene:"Pagi hari, kamu berdiri di depan rumah. Ada pengemis mendekat.",
+    npc:"👴",npcName:"Pak Pengemis",objective:"🎯 Kenali jenis zakat",
+    dialog:'"Assalamu\'alaikum, Nak. Sudah Ramadhan akhir ini. Apakah kamu tahu kewajiban kita di akhir Ramadhan?"',
+    q:"Di akhir Ramadhan sebelum Idul Fitri, zakat apa yang wajib dikeluarkan?",
+    opts:["Zakat Fitrah untuk menyucikan jiwa","Zakat Maal saja","Tidak ada kewajiban","Infaq sukarela"],
+    ans:0,info:"Zakat Fitrah wajib dikeluarkan setiap Muslim sebelum Sholat Idul Fitri sebesar 2,5 kg makanan pokok.",
+    ammo:"+1 Ilmu Zakat Fitrah",iman:10
+  },
+  {
+    scene:"Kamu berjalan ke pasar. Seorang pedagang memanggilmu.",
+    npc:"🧔",npcName:"Pak Pedagang",objective:"🎯 Hitung zakat perdagangan",
+    dialog:'"Saudaraku, aku pedagang. Tahun ini total asetku Rp 200 juta. Berapa kira-kira zakatku?"',
+    q:"Total aset usaha Rp 200 juta, nisab tercapai. Berapa zakat perdagangan (2,5%)?",
+    opts:["Rp 5.000.000","Rp 2.000.000","Rp 10.000.000","Rp 1.000.000"],
+    ans:0,info:"Zakat perdagangan 2,5% × Rp 200.000.000 = Rp 5.000.000. Kadar sama dengan zakat maal.",
+    ammo:"+1 Ilmu Zakat Perdagangan",iman:10
+  },
+  {
+    scene:"Kamu tiba di masjid. Pak Amil zakat sedang menjelaskan sesuatu.",
+    npc:"👳",npcName:"Pak Amil BAZNAS",objective:"🎯 Ketahui 8 asnaf",
+    dialog:'"Alhamdulillah ada yang datang! Nak, tolong bantu aku menjelaskan kepada jamaah siapa saja yang berhak menerima zakat."',
+    q:"Dari daftar ini, manakah yang BUKAN termasuk 8 asnaf penerima zakat?",
+    opts:["Orang kaya yang dermawan","Fakir miskin","Amil zakat","Ibnu Sabil"],
+    ans:0,info:"Delapan asnaf: fakir, miskin, amil, muallaf, riqab, gharim, fi sabilillah, ibnu sabil. Orang kaya BUKAN penerima.",
+    ammo:"+1 Ilmu Mustahiq",iman:15
+  },
+  {
+    scene:"Seorang ibu mendatangimu dengan wajah cemas.",
+    npc:"👩",npcName:"Bu Siti",objective:"🎯 Bantu hitung zakat fitrah",
+    dialog:'"Anakku, aku punya 5 anggota keluarga. Harga beras Rp 13.000/kg. Bantu aku hitung zakat fitrah ya!"',
+    q:"5 anggota keluarga × 2,5 kg × Rp 13.000/kg = berapa total zakat fitrahnya?",
+    opts:["Rp 162.500","Rp 130.000","Rp 200.000","Rp 100.000"],
+    ans:0,info:"5 × 2,5 kg × Rp 13.000 = Rp 162.500. Ini adalah kewajiban kepala keluarga untuk seluruh tanggungan.",
+    ammo:"+1 Ilmu Hitung Fitrah",iman:15
+  },
+  {
+    scene:"Di kantor zakat, seorang pemuda datang dengan uang tabungan.",
+    npc:"🧑",npcName:"Mas Rian - Karyawan",objective:"🎯 Hitung zakat profesi",
+    dialog:'"Mas, aku gaji Rp 8 juta/bulan. Katanya ada zakat profesi. Apakah aku wajib? Berapa ya?"',
+    q:"Gaji Rp 8.000.000/bulan. Nisab ≈ Rp 6.500.000. Kadar 2,5%. Berapa zakat profesinya?",
+    opts:["Rp 200.000","Rp 162.500","Rp 400.000","Rp 80.000"],
+    ans:0,info:"2,5% × Rp 8.000.000 = Rp 200.000/bulan. Karena penghasilan > nisab, wajib zakat profesi.",
+    ammo:"+1 Ilmu Zakat Profesi",iman:20
+  },
+  {
+    scene:"Kamu kembali ke rumah. Keluarga menunggumu. Misi selesai!",
+    npc:"👨‍👩‍👧‍👦",npcName:"Keluargamu",objective:"🎯 Sempurnakan ilmumu",
+    dialog:'"Alhamdulillah kamu sudah belajar banyak hari ini! Satu pertanyaan terakhir ya, tentang hikmah zakat."',
+    q:"Apa hikmah utama berzakat bagi seorang Muslim?",
+    opts:["Menyucikan harta & jiwa serta menolong sesama","Agar cepat kaya","Pamer kebaikan","Terhindar dari pajak"],
+    ans:0,info:"Hikmah zakat: menyucikan harta dari hak orang lain, menyucikan jiwa dari sifat kikir, serta menciptakan keseimbangan sosial.",
+    ammo:"+1 Ilmu Hikmah Zakat",iman:25
+  }
+];
+
+// ============================================================
+// PLAYER STATE
+// ============================================================
+let player = {
+  name: localStorage.getItem('zq_name') || '',
+  kelas: localStorage.getItem('zq_kelas') || '',
+};
+
+let state = {
+  mode:'',difficulty:'medium',score:0,lives:3,streak:0,maxStreak:0,
+  correct:0,total:0,questionIndex:0,questions:[],
+  timer:null,timeLeft:20,maxTime:20,
+  lifelines:{ff:true,skip:true,time:true},canAnswer:true,
+  highScore:parseInt(localStorage.getItem('zq_hs')||'0'),
+  gamesPlayed:parseInt(localStorage.getItem('zq_gp')||'0'),
+  bestStreak:parseInt(localStorage.getItem('zq_bs')||'0'),
+  leaderboard:JSON.parse(localStorage.getItem('zq_lb')||'[]')
+};
+
+let speedState = {time:60,score:0,correct:0,streak:0,maxStreak:0,qIdx:0,questions:[],timer:null,canAnswer:true};
+let rpgState = {score:0,level:1,xp:0,enemyHp:100,maxEnemyHp:100,qIdx:0,questions:[],correct:0,total:0,maxStreak:0,streak:0};
+let fpsState = {score:0,sceneIdx:0,iman:100,ammo:0,pahala:0,correct:0,total:0,maxStreak:0,streak:0};
+
+// ============================================================
+// REGISTRATION
+// ============================================================
+function registerPlayer() {
+  const name = document.getElementById('reg-name').value.trim();
+  const kelas = document.getElementById('reg-class').value;
+  if (!name) { alert('Masukkan nama kamu dulu!'); return; }
+  if (!kelas) { alert('Pilih kelas kamu dulu!'); return; }
+  player.name = name;
+  player.kelas = kelas;
+  localStorage.setItem('zq_name', name);
+  localStorage.setItem('zq_kelas', kelas);
+  document.getElementById('home-player-name').textContent = name;
+  document.getElementById('home-player-class').textContent = kelas;
+  updateHomeStats();
+  showScreen('screen-home');
+}
+
+// ============================================================
+// UTILS
+// ============================================================
+function initStars() {
+  const c = document.getElementById('stars');
+  for(let i=0;i<150;i++){
+    const s=document.createElement('div');s.className='star';
+    const sz=Math.random()*3+1;
+    s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${Math.random()*3+2}s;animation-delay:${Math.random()*3}s;`;
+    c.appendChild(s);
+  }
+}
+
+function shuffle(arr) {
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if(id==='screen-leaderboard') renderLeaderboard('all');
+  if(id==='screen-home'){
+    document.getElementById('home-player-name').textContent = player.name || '—';
+    document.getElementById('home-player-class').textContent = player.kelas || '—';
+  }
+}
+
+function updateHomeStats() {
+  document.getElementById('hs-score').textContent = state.highScore.toLocaleString();
+  document.getElementById('hs-games').textContent = state.gamesPlayed;
+  document.getElementById('hs-streak').textContent = state.bestStreak;
+}
+
+// ============================================================
+// MODE SELECTION
+// ============================================================
+function selectMode(mode) {
+  if(!player.name){showScreen('screen-register');return;}
+  state.mode = mode;
+  if(mode==='speed'){startSpeedGame();return;}
+  if(mode==='rpg'){startRPGGame();return;}
+  if(mode==='fps'){startFPSGame();return;}
+  document.getElementById('diff-mode-name').textContent =
+    mode==='quiz'?'🕌 Mode Kuis Zakat':'🧮 Mode Hitung Zakat';
+  showScreen('screen-difficulty');
+}
+
+// ============================================================
+// QUIZ MODE
+// ============================================================
+function startGame(difficulty) {
+  state.difficulty=difficulty;state.score=0;
+  state.lives=difficulty==='hard'?2:3;
+  state.streak=0;state.maxStreak=0;state.correct=0;state.total=0;state.questionIndex=0;
+  state.lifelines={ff:true,skip:true,time:true};state.canAnswer=true;
+  const tm={easy:35,medium:20,hard:12};
+  state.maxTime=tm[difficulty];
+  if(state.mode==='quiz'){
+    state.questions=shuffle([...quizQuestions]).slice(0,20);
+    showScreen('screen-quiz');updateQuizHUD();loadQuestion();
+  } else {
+    state.questions=shuffle([...calcProblems]);
+    showScreen('screen-calc');loadCalcQuestion();
+  }
+}
+
+function loadQuestion() {
+  if(state.questionIndex>=state.questions.length){endGame();return;}
+  state.canAnswer=true;
+  const q=state.questions[state.questionIndex];
+  document.getElementById('q-category').textContent=q.cat;
+  document.getElementById('q-number-display').textContent=`${state.questionIndex+1}/${state.questions.length}`;
+  document.getElementById('q-text').textContent=q.q;
+  document.getElementById('q-progress').style.width=(state.questionIndex/state.questions.length*100)+'%';
+  const shuffled=shuffle([0,1,2,3].map(i=>({text:q.opts[i],correct:i===q.ans})));
+  document.getElementById('q-options').innerHTML=shuffled.map((o)=>
+    `<button class="option-btn" onclick="answerQuiz(this,${o.correct},'${encodeURIComponent(q.info)}')">${o.text}</button>`
+  ).join('');
+  updateQuizHUD();startTimer('quiz');
+}
+
+function answerQuiz(btn,isCorrect,infoEnc) {
+  if(!state.canAnswer)return;
+  state.canAnswer=false;clearInterval(state.timer);state.total++;
+  const multiplier={easy:1,medium:2,hard:3}[state.difficulty];
+  const timeBonus=Math.floor(state.timeLeft*2);
+  document.querySelectorAll('#q-options .option-btn').forEach(b=>b.disabled=true);
+  if(isCorrect){
+    btn.classList.add('correct');state.correct++;state.streak++;
+    state.maxStreak=Math.max(state.maxStreak,state.streak);
+    const pts=(100+timeBonus)*multiplier*(state.streak>=3?Math.min(state.streak,5):1);
+    state.score+=pts;
+    showFeedback(true,decodeURIComponent(infoEnc),pts);
+    if(state.streak>=3)showCombo(state.streak);
+    spawnScoreFloat(pts);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('#q-options .option-btn').forEach(b=>{if(b.onclick.toString().includes(',true,'))b.classList.add('correct');});
+    state.streak=0;state.lives--;
+    showFeedback(false,decodeURIComponent(infoEnc),0);
+    if(state.lives<=0){setTimeout(()=>{hideFeedback();endGame();},2500);return;}
+  }
+  updateQuizHUD();
+  setTimeout(()=>{hideFeedback();state.questionIndex++;loadQuestion();},2300);
+}
+
+function updateQuizHUD() {
+  document.getElementById('q-score').textContent=state.score.toLocaleString();
+  const maxLives=state.difficulty==='hard'?2:3;
+  document.getElementById('q-lives').textContent='❤️'.repeat(state.lives)+'🖤'.repeat(Math.max(0,maxLives-state.lives));
+  document.getElementById('q-streak').textContent=`🔥${state.streak}`;
+  document.getElementById('q-num').textContent=`${state.questionIndex+1}/${state.questions.length}`;
+}
+
+function startTimer(mode) {
+  state.timeLeft=state.maxTime;clearInterval(state.timer);
+  const fillEl=document.getElementById(mode==='quiz'?'q-timer-fill':'c-timer-fill');
+  const textEl=document.getElementById(mode==='quiz'?'q-timer-text':'c-timer-text');
+  state.timer=setInterval(()=>{
+    state.timeLeft-=.1;
+    const pct=(state.timeLeft/state.maxTime)*100;
+    fillEl.style.width=pct+'%';
+    textEl.textContent=Math.ceil(state.timeLeft)+'s';
+    if(state.timeLeft<=5)fillEl.classList.add('danger');else fillEl.classList.remove('danger');
+    if(state.timeLeft<=0){
+      clearInterval(state.timer);
+      if(mode==='quiz'){
+        state.canAnswer=false;state.streak=0;state.lives--;updateQuizHUD();
+        showFeedback(false,'⏰ Waktu habis! Terlalu lama menjawab.',0);
+        if(state.lives<=0){setTimeout(()=>{hideFeedback();endGame();},2000);return;}
+        setTimeout(()=>{hideFeedback();state.questionIndex++;loadQuestion();},2000);
+      }else{checkCalcAnswer(true);}
+    }
+  },100);
+}
+
+function useFiftyFifty(){
+  if(!state.lifelines.ff)return;state.lifelines.ff=false;
+  document.getElementById('ll-50').disabled=true;
+  const btns=document.querySelectorAll('#q-options .option-btn');
+  let r=0;btns.forEach(b=>{if(r<2&&!b.onclick.toString().includes(',true,')){b.style.opacity='.3';b.disabled=true;r++;}});
+}
+function useSkip(){
+  if(!state.lifelines.skip)return;state.lifelines.skip=false;
+  document.getElementById('ll-skip').disabled=true;
+  clearInterval(state.timer);state.questionIndex++;state.canAnswer=true;loadQuestion();
+}
+function useTimeBonus(){
+  if(!state.lifelines.time)return;state.lifelines.time=false;
+  document.getElementById('ll-time').disabled=true;
+  state.timeLeft=Math.min(state.timeLeft+10,state.maxTime);
+}
+
+// ============================================================
+// CALC MODE
+// ============================================================
+function loadCalcQuestion(){
+  if(state.questionIndex>=state.questions.length){endGame();return;}
+  const q=state.questions[state.questionIndex];
+  document.getElementById('c-num').textContent=`${state.questionIndex+1}/${state.questions.length}`;
+  document.getElementById('c-lives').textContent='❤️'.repeat(state.lives)+'🖤'.repeat(Math.max(0,3-state.lives));
+  document.getElementById('c-streak').textContent=`🔥${state.streak}`;
+  document.getElementById('calc-problem').innerHTML=`
+    <div style="margin-bottom:12px;"><span style="background:rgba(78,205,196,.15);border:1px solid var(--accent);border-radius:20px;padding:3px 12px;font-size:.7rem;color:var(--accent);">${q.cat}</span></div>
+    <div style="font-size:clamp(.9rem,2.5vw,1.05rem);line-height:1.8;">${q.q.replace(/Rp ([0-9.,]+)/g,'Rp <span class="hl">$1</span>')}</div>
+    <div style="margin-top:10px;opacity:.6;font-size:.78rem;">💡 ${q.hint}</div>
+  `;
+  document.getElementById('calc-answer').value='';
+  document.getElementById('calc-answer').focus();
+  const tm={easy:60,medium:45,hard:30};
+  state.maxTime=tm[state.difficulty];
+  startTimer('calc');
+}
+
+function checkCalcAnswer(timeout=false){
+  clearInterval(state.timer);
+  const q=state.questions[state.questionIndex];
+  const userAns=parseFloat(document.getElementById('calc-answer').value);
+  const isCorrect=!timeout&&!isNaN(userAns)&&Math.abs(userAns-q.ans)/Math.max(q.ans,1)<0.02;
+  const multiplier={easy:1,medium:2,hard:3}[state.difficulty];
+  const timeBonus=Math.floor(state.timeLeft*3);
+  if(isCorrect){
+    state.correct++;state.streak++;state.maxStreak=Math.max(state.maxStreak,state.streak);
+    const pts=(200+timeBonus)*multiplier;state.score+=pts;state.total++;
+    showFeedback(true,`✅ Benar! Jawaban: ${q.ans.toLocaleString()}`,pts);
+    if(state.streak>=2)showCombo(state.streak);spawnScoreFloat(pts);
+  } else {
+    state.streak=0;state.lives--;state.total++;
+    const msg=timeout?`⏰ Waktu habis! Jawaban: ${q.ans.toLocaleString()}`:`❌ Salah! Jawaban: ${q.ans.toLocaleString()}`;
+    showFeedback(false,msg,0);
+    if(state.lives<=0){setTimeout(()=>{hideFeedback();endGame();},2500);return;}
+  }
+  document.getElementById('c-score').textContent=state.score.toLocaleString();
+  document.getElementById('c-streak').textContent=`🔥${state.streak}`;
+  document.getElementById('c-lives').textContent='❤️'.repeat(state.lives)+'🖤'.repeat(Math.max(0,3-state.lives));
+  setTimeout(()=>{hideFeedback();state.questionIndex++;loadCalcQuestion();},2300);
+}
+
+// ============================================================
+// SPEED MODE
+// ============================================================
+function startSpeedGame(){
+  speedState={time:60,score:0,correct:0,streak:0,maxStreak:0,qIdx:0,
+    questions:shuffle([...speedQuestions,...speedQuestions]),timer:null,canAnswer:true};
+  showScreen('screen-speed');loadSpeedQuestion();
+  speedState.timer=setInterval(()=>{
+    speedState.time--;
+    document.getElementById('s-time').textContent=speedState.time;
+    document.getElementById('s-timer-fill').style.width=(speedState.time/60*100)+'%';
+    if(speedState.time<=10)document.getElementById('s-timer-fill').classList.add('danger');
+    if(speedState.time<=0){clearInterval(speedState.timer);
+      state.mode='speed';state.score=speedState.score;state.correct=speedState.correct;
+      state.total=speedState.qIdx;state.maxStreak=speedState.maxStreak;showResultScreen();}
+  },1000);
+}
+
+function loadSpeedQuestion(){
+  if(speedState.qIdx>=speedState.questions.length){
+    speedState.questions=shuffle([...speedQuestions,...speedQuestions]);speedState.qIdx=0;}
+  const q=speedState.questions[speedState.qIdx];speedState.canAnswer=true;
+  document.getElementById('s-text').textContent=q.q;
+  const sh=shuffle([0,1,2,3].map(i=>({text:q.opts[i],correct:i===q.ans})));
+  document.getElementById('s-options').innerHTML=sh.map(o=>
+    `<button class="option-btn" onclick="answerSpeed(this,${o.correct})">${o.text}</button>`
+  ).join('');
+}
+
+function answerSpeed(btn,isCorrect){
+  if(!speedState.canAnswer)return;speedState.canAnswer=false;
+  document.querySelectorAll('#s-options .option-btn').forEach(b=>b.disabled=true);
+  if(isCorrect){
+    btn.classList.add('correct');speedState.correct++;speedState.streak++;
+    speedState.maxStreak=Math.max(speedState.maxStreak,speedState.streak);
+    const pts=50*Math.min(speedState.streak,6);speedState.score+=pts;
+    spawnScoreFloat(pts);if(speedState.streak>=3)showCombo(speedState.streak);
+  } else {btn.classList.add('wrong');speedState.streak=0;}
+  document.getElementById('s-score').textContent=speedState.score.toLocaleString();
+  document.getElementById('s-correct').textContent=speedState.correct;
+  document.getElementById('s-streak').textContent=`🔥${speedState.streak}`;
+  speedState.qIdx++;setTimeout(()=>loadSpeedQuestion(),550);
+}
+
+// ============================================================
+// RPG MODE
+// ============================================================
+function startRPGGame(){
+  rpgState={score:0,level:1,xp:0,enemyHp:100,maxEnemyHp:100,
+    qIdx:0,questions:shuffle([...rpgQuestions]),correct:0,total:0,maxStreak:0,streak:0};
+  showScreen('screen-rpg');
+  // init small stars
+  const c=document.getElementById('rpg-bg-stars');c.innerHTML='';
+  for(let i=0;i<40;i++){const s=document.createElement('div');
+    s.style.cssText=`position:absolute;background:white;border-radius:50%;width:${Math.random()*2+1}px;height:${Math.random()*2+1}px;left:${Math.random()*100}%;top:${Math.random()*100}%;opacity:${Math.random()*.7+.2};`;
+    c.appendChild(s);}
+  updateRPGHUD();loadRPGQuestion();
+}
+
+function loadRPGQuestion(){
+  if(rpgState.qIdx>=rpgState.questions.length){
+    rpgState.questions=shuffle([...rpgQuestions]);rpgState.qIdx=0;
+    rpgState.level++;rpgState.enemyHp=100+rpgState.level*20;rpgState.maxEnemyHp=rpgState.enemyHp;
+    document.getElementById('rpg-dialog-text').textContent=`Level ${rpgState.level} dimulai! Musuh semakin kuat!`;
+  }
+  const q=rpgState.questions[rpgState.qIdx];
+  document.getElementById('rpg-q-text').textContent=q.q;
+  const sh=shuffle([0,1,2,3].map(i=>({text:q.opts[i],correct:i===q.ans})));
+  document.getElementById('rpg-options').innerHTML=sh.map(o=>
+    `<button class="option-btn" onclick="answerRPG(this,${o.correct},${q.dmg},'${encodeURIComponent(q.info)}')">${o.text}</button>`
+  ).join('');
+}
+
+function answerRPG(btn,isCorrect,dmg,infoEnc){
+  document.querySelectorAll('#rpg-options .option-btn').forEach(b=>b.disabled=true);
+  rpgState.total++;
+  if(isCorrect){
+    btn.classList.add('correct');rpgState.correct++;rpgState.streak++;
+    rpgState.maxStreak=Math.max(rpgState.maxStreak,rpgState.streak);
+    rpgState.enemyHp=Math.max(0,rpgState.enemyHp-dmg);
+    const xpGain=dmg*2;rpgState.xp+=xpGain;
+    const pts=dmg*10*(rpgState.streak>=2?rpgState.streak:1);rpgState.score+=pts;
+    spawnDmg('-'+dmg+' HP',true);spawnScoreFloat(pts);
+    if(rpgState.streak>=2)showCombo(rpgState.streak);
+    document.getElementById('rpg-dialog-text').textContent=decodeURIComponent(infoEnc);
+    if(rpgState.enemyHp<=0){
+      // Enemy defeated
+      setTimeout(()=>{
+        rpgState.level++;rpgState.enemyHp=100+rpgState.level*30;rpgState.maxEnemyHp=rpgState.enemyHp;
+        document.getElementById('rpg-dialog-name').textContent='KEMENANGAN!';
+        document.getElementById('rpg-dialog-text').textContent=`MasyaAllah! Musuh dikalahkan! Level ${rpgState.level} dimulai. Musuh baru muncul!`;
+        rpgState.qIdx++;updateRPGHUD();
+        if(rpgState.level>4){state.mode='rpg';state.score=rpgState.score;state.correct=rpgState.correct;state.total=rpgState.total;state.maxStreak=rpgState.maxStreak;showResultScreen();return;}
+        setTimeout(()=>loadRPGQuestion(),1500);
+      },1200);return;
+    }
+  } else {
+    btn.classList.add('wrong');rpgState.streak=0;
+    document.querySelectorAll('#rpg-options .option-btn').forEach(b=>{if(b.onclick.toString().includes(',true,'))b.classList.add('correct');});
+    spawnDmg('MISS!',false);
+    document.getElementById('rpg-dialog-text').textContent='Ha ha! Jawaban salah! '+decodeURIComponent(infoEnc);
+  }
+  updateRPGHUD();
+  setTimeout(()=>{rpgState.qIdx++;loadRPGQuestion();},2500);
+}
+
+function updateRPGHUD(){
+  document.getElementById('r-score').textContent=rpgState.score.toLocaleString();
+  document.getElementById('r-hp').textContent=rpgState.enemyHp;
+  document.getElementById('r-level').textContent=rpgState.level;
+  document.getElementById('r-xp').textContent=rpgState.xp;
+  document.getElementById('rpg-enemy-hp-bar').style.width=(rpgState.enemyHp/rpgState.maxEnemyHp*100)+'%';
+  document.getElementById('rpg-xp-bar').style.width=Math.min((rpgState.xp%200)/200*100,100)+'%';
+  const enemies=['👺','👹','🧟','💀'];
+  document.getElementById('rpg-npc').textContent=enemies[Math.min(rpgState.level-1,3)];
+  const names=['MUSUH KEJAHILAN','IBLIS KEBODOHAN','SETAN KEMALASAN','BOS TERAKHIR: KUFUR NIKMAT'];
+  document.getElementById('rpg-dialog-name').textContent=names[Math.min(rpgState.level-1,3)];
+}
+
+function spawnDmg(text,isGood){
+  const el=document.createElement('div');el.className='damage-text '+(isGood?'dmg-red':'dmg-green');
+  el.textContent=text;el.style.left=(30+Math.random()*40)+'%';el.style.top='35%';
+  document.body.appendChild(el);setTimeout(()=>el.remove(),1100);
+}
+
+// ============================================================
+// FPS MODE
+// ============================================================
+function startFPSGame(){
+  fpsState={score:0,sceneIdx:0,iman:100,ammo:0,pahala:0,correct:0,total:0,maxStreak:0,streak:0};
+  showScreen('screen-fps');loadFPSScene();
+}
+
+function loadFPSScene(){
+  if(fpsState.sceneIdx>=fpsScenes.length){
+    state.mode='fps';state.score=fpsState.score;state.correct=fpsState.correct;
+    state.total=fpsState.total;state.maxStreak=fpsState.maxStreak;showResultScreen();return;
+  }
+  const sc=fpsScenes[fpsState.sceneIdx];
+  document.getElementById('fps-objective').textContent=sc.objective;
+  document.getElementById('fps-npc').textContent=sc.npc;
+  document.getElementById('fps-dialog').textContent=sc.dialog;
+  document.getElementById('fps-speaker').textContent=`— ${sc.npcName}`;
+  document.getElementById('fps-question').textContent=sc.q;
+  document.getElementById('fps-health').textContent=`💚 IMAN: ${fpsState.iman}`;
+  document.getElementById('fps-ammo').textContent=`💰 ZAKAT: ${fpsState.ammo}`;
+  document.getElementById('fps-score-display').textContent=`Skor: ${fpsState.score.toLocaleString()}`;
+  document.getElementById('fps-scene-display').textContent=`Scene ${fpsState.sceneIdx+1}/${fpsScenes.length}`;
+  document.getElementById('fps-xp-display').textContent=`Pahala: ${fpsState.pahala}`;
+  const sh=shuffle([0,1,2,3].map(i=>({text:sc.opts[i],correct:i===sc.ans})));
+  document.getElementById('fps-choices').innerHTML=sh.map(o=>
+    `<button class="fps-choice" onclick="answerFPS(this,${o.correct},${fpsState.sceneIdx})">${o.text}</button>`
+  ).join('');
+}
+
+function answerFPS(btn,isCorrect,scIdx){
+  document.querySelectorAll('.fps-choice').forEach(b=>b.disabled=true);
+  const sc=fpsScenes[scIdx];fpsState.total++;
+  if(isCorrect){
+    btn.classList.add('correct');fpsState.correct++;fpsState.streak++;
+    fpsState.maxStreak=Math.max(fpsState.maxStreak,fpsState.streak);
+    fpsState.ammo++;fpsState.pahala+=sc.iman;
+    const pts=150*fpsState.streak;fpsState.score+=pts;
+    spawnScoreFloat(pts);
+    document.getElementById('fps-dialog').textContent=`✅ Benar! ${sc.info}`;
+    document.getElementById('fps-speaker').textContent=`— ${sc.npcName}`;
+    if(fpsState.streak>=2)showCombo(fpsState.streak);
+  } else {
+    btn.classList.add('wrong');fpsState.iman=Math.max(0,fpsState.iman-20);fpsState.streak=0;
+    document.getElementById('fps-dialog').textContent=`❌ Kurang tepat. ${sc.info}`;
+    document.getElementById('fps-speaker').textContent='— Catatan Pembelajaran';
+    document.querySelectorAll('.fps-choice').forEach(b=>{if(b.onclick.toString().includes(',true,'))b.classList.add('correct');});
+  }
+  document.getElementById('fps-health').textContent=`💚 IMAN: ${fpsState.iman}`;
+  document.getElementById('fps-ammo').textContent=`💰 ZAKAT: ${fpsState.ammo}`;
+  document.getElementById('fps-score-display').textContent=`Skor: ${fpsState.score.toLocaleString()}`;
+  document.getElementById('fps-xp-display').textContent=`Pahala: ${fpsState.pahala}`;
+  fpsState.sceneIdx++;
+  setTimeout(()=>loadFPSScene(),2800);
+}
+
+// ============================================================
+// FEEDBACK
+// ============================================================
+function showFeedback(ok,info,pts){
+  document.getElementById('fb-emoji').textContent=ok?'✅':'❌';
+  document.getElementById('fb-title').textContent=ok?rndPraise():rndEncourage();
+  document.getElementById('fb-info').textContent=info;
+  document.getElementById('fb-points').textContent=ok?`+${pts.toLocaleString()} pts`:'';
+  const fb=document.getElementById('feedback');
+  fb.className=`feedback ${ok?'feedback-correct':'feedback-wrong'}`;
+  fb.classList.add('show');document.getElementById('overlay').classList.add('show');
+}
+function hideFeedback(){document.getElementById('feedback').classList.remove('show');document.getElementById('overlay').classList.remove('show');}
+function rndPraise(){return['MASYA ALLAH!','LUAR BIASA!','TEPAT SEKALI!','SUBHANALLAH!','SEMPURNA! 🌟'][Math.floor(Math.random()*5)];}
+function rndEncourage(){return['JANGAN MENYERAH!','COBA LAGI!','KURANG TEPAT...','PELAJARI LAGI! 📚'][Math.floor(Math.random()*4)];}
+
+// ============================================================
+// FX
+// ============================================================
+function showCombo(streak){
+  const el=document.createElement('div');el.className='combo-indicator';
+  el.textContent=`🔥 ${streak}× COMBO!`;document.body.appendChild(el);setTimeout(()=>el.remove(),1100);
+}
+function spawnScoreFloat(pts){
+  const el=document.createElement('div');el.className='score-float';
+  el.textContent=`+${pts}`;el.style.left=(20+Math.random()*60)+'%';el.style.top='40%';
+  document.body.appendChild(el);setTimeout(()=>el.remove(),1100);
+}
+function spawnConfetti(){
+  const cols=['#F5C842','#4ECDC4','#FF6B6B','#1DB954','#9B59B6'];
+  for(let i=0;i<70;i++){
+    const el=document.createElement('div');el.className='confetti-particle';
+    el.style.cssText=`left:${Math.random()*100}%;top:${-10+Math.random()*20}px;background:${cols[Math.floor(Math.random()*cols.length)]};width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;border-radius:${Math.random()>.5?'50%':'0'};animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*.5}s;`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),3500);
+  }
+}
+
+// ============================================================
+// END GAME
+// ============================================================
+function endGame(){clearInterval(state.timer);showResultScreen();}
+function quitGame(){
+  clearInterval(state.timer);clearInterval(speedState.timer);
+  showScreen('screen-home');
+}
+
+function showResultScreen(){
+  const score=state.score;
+  const correct=state.correct;const total=Math.max(state.total,1);
+  const maxStreak=state.maxStreak;const accuracy=Math.round(correct/total*100);
+  let rank,rankColor,trophy,title,message;
+  if(score>=3000||accuracy>=90){
+    rank='🌟 ULAMA ZAKAT 🌟';rankColor='var(--gold)';trophy='🏆';title='LUAR BIASA!';
+    message='MasyaAllah! Penguasaanmu tentang zakat sangat luar biasa! Semoga ilmumu bermanfaat untuk sesama.';
+  } else if(score>=1500||accuracy>=70){
+    rank='⭐ USTAZ ZAKAT';rankColor='var(--accent)';trophy='🥇';title='KEREN!';
+    message='Alhamdulillah! Pengetahuanmu sudah baik. Terus belajar untuk mencapai pemahaman yang sempurna!';
+  } else if(score>=700||accuracy>=50){
+    rank='📚 PELAJAR ZAKAT';rankColor='var(--green)';trophy='🥈';title='BAGUS!';
+    message='Sudah ada kemajuan! Terus pelajari ilmu zakat agar semakin paham dan bisa mengamalkannya.';
+  } else {
+    rank='🌱 PEMULA';rankColor='rgba(255,255,255,.5)';trophy='📖';title='SEMANGAT!';
+    message='Jangan menyerah! Mulailah dengan mempelajari dasar-dasar zakat fitrah dan zakat maal.';
+  }
+  document.getElementById('result-trophy').textContent=trophy;
+  document.getElementById('result-title').textContent=title;
+  document.getElementById('result-score').textContent=score.toLocaleString();
+  document.getElementById('result-rank').textContent=rank;
+  document.getElementById('result-rank').style.cssText=`background:${rankColor}22;color:${rankColor};border:2px solid ${rankColor};`;
+  document.getElementById('res-correct').textContent=correct;
+  document.getElementById('res-streak').textContent=maxStreak;
+  document.getElementById('res-accuracy').textContent=accuracy+'%';
+  document.getElementById('result-message').innerHTML=`💬 ${message}`;
+  document.getElementById('res-player-name').textContent=player.name||'—';
+  document.getElementById('res-player-class').textContent=player.kelas||'—';
+
+  state.gamesPlayed++;
+  if(score>state.highScore){state.highScore=score;localStorage.setItem('zq_hs',score);spawnConfetti();}
+  if(maxStreak>state.bestStreak){state.bestStreak=maxStreak;localStorage.setItem('zq_bs',maxStreak);}
+  localStorage.setItem('zq_gp',state.gamesPlayed);
+
+  const modeNames={quiz:'Kuis',calc:'Hitungan',speed:'Speed',rpg:'RPG',fps:'FPS POV'};
+  const entry={
+    name:player.name||'Anonim',kelas:player.kelas||'—',
+    score,mode:modeNames[state.mode]||state.mode,
+    rank,accuracy,date:new Date().toLocaleDateString('id')
+  };
+  state.leaderboard.push(entry);
+  state.leaderboard.sort((a,b)=>b.score-a.score);
+  state.leaderboard=state.leaderboard.slice(0,30);
+  localStorage.setItem('zq_lb',JSON.stringify(state.leaderboard));
+  updateHomeStats();showScreen('screen-result');
+  if(accuracy>=75)spawnConfetti();
+}
+
+function playAgain(){
+  if(state.mode==='speed')startSpeedGame();
+  else if(state.mode==='rpg')startRPGGame();
+  else if(state.mode==='fps')startFPSGame();
+  else selectMode(state.mode);
+}
+
+// ============================================================
+// LEADERBOARD
+// ============================================================
+let currentLBFilter='all';
+function filterLB(filter,btn){
+  currentLBFilter=filter;
+  document.querySelectorAll('.lb-filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderLeaderboard(filter);
+}
+
+function renderLeaderboard(filter){
+  const lb=document.getElementById('lb-list');
+  let data=state.leaderboard;
+  if(filter!=='all')data=data.filter(e=>e.mode===filter);
+  if(data.length===0){
+    lb.innerHTML='<li style="text-align:center;opacity:.5;padding:25px;font-style:italic;">Belum ada skor untuk mode ini.<br>Ayo mulai bermain!</li>';return;
+  }
+  const avatars=['🧕','👨','👩','🧑','👦','👧','🧓','👴','👳','🧔'];
+  lb.innerHTML=data.map((e,i)=>{
+    const rankText=i<3?['🥇','🥈','🥉'][i]:`#${i+1}`;
+    const rankClass=i===0?'gold':i===1?'silver':i===2?'bronze':'';
+    const av=avatars[Math.floor(Math.random()*avatars.length)];
+    return `<li class="lb-item">
+      <span class="lb-rank ${rankClass}">${rankText}</span>
+      <div class="lb-avatar">${av}</div>
+      <div class="lb-info">
+        <div class="lb-name">${e.name}</div>
+        <div class="lb-meta">🏫 ${e.kelas||'—'} &nbsp;•&nbsp; ${e.date||''} &nbsp;<span class="lb-mode-tag">${e.mode}</span></div>
+      </div>
+      <div style="text-align:right;">
+        <div class="lb-score">${e.score.toLocaleString()}</div>
+        <div style="font-size:.7rem;opacity:.5;">${e.accuracy||0}% akurasi</div>
+      </div>
+    </li>`;
+  }).join('');
+}
+
+// ============================================================
+// BOOT
+// ============================================================
+initStars();
+if(player.name){
+  showScreen('screen-home');
+  document.getElementById('home-player-name').textContent=player.name;
+  document.getElementById('home-player-class').textContent=player.kelas;
+  updateHomeStats();
+}
+
+document.addEventListener('mousemove',e=>{
+  document.querySelectorAll('.question-card').forEach(card=>{
+    const r=card.getBoundingClientRect();
+    card.style.setProperty('--mx',((e.clientX-r.left)/r.width*100)+'%');
+    card.style.setProperty('--my',((e.clientY-r.top)/r.height*100)+'%');
+  });
+});
+</script>
+</body>
+</html>
